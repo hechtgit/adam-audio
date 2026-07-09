@@ -31,25 +31,37 @@
   function esc(s){ var d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
   function fmt(s){ s=Math.max(0,Math.floor(s||0)); var m=Math.floor(s/60), r=s%60; return m+":"+(r<10?"0":"")+r; }
 
+  // Normalizuj text na porovnanie: zlúč medzery a odstráň medzeru pred interpunkciou
+  // (marks môžu mať artefakt "slovo ." — na stránke je "slovo.").
+  function normTxt(s){ return s.replace(/\s+([.,;:!?…])/g, "$1").replace(/\s+/g, " ").trim(); }
+
   function wrapSentences(blocks, marks) {
+    var ps = [];
+    blocks.forEach(function (b) { [].slice.call(b.querySelectorAll("p")).forEach(function (p) { ps.push(p); }); });
+    var norms = ps.map(function (p) { return normTxt(p.textContent); });
     var gi = 0, wrapped = 0;
-    blocks.forEach(function (body) {
-      [].slice.call(body.querySelectorAll("p")).forEach(function (p) {
-        if (gi >= marks.length) return;
-        var txt = p.textContent.replace(/\s+/g, " ").trim();
-        if (!txt) return;
-        var html = "", pos = 0, matchedHere = false;
-        while (gi < marks.length) {
-          var target = marks[gi].text.replace(/\s+/g, " ").trim();
-          var idx = txt.indexOf(target, pos);
-          if (idx < 0) break;
-          if (idx > pos) html += esc(txt.slice(pos, idx));
-          html += '<span class="adam-s" data-i="' + marks[gi].i + '">' + esc(target) + "</span>";
-          pos = idx + target.length; gi++; matchedHere = true; wrapped++;
+    for (var pi = 0; pi < ps.length && gi < marks.length; pi++) {
+      var txt = norms[pi];
+      if (!txt) continue;
+      var html = "", pos = 0, matchedHere = false;
+      while (gi < marks.length) {
+        var target = normTxt(marks[gi].text);
+        if (!target) { gi++; continue; }
+        var idx = txt.indexOf(target, pos);
+        if (idx < 0) {
+          // Ak značka nie je v žiadnom NASLEDUJÚCOM odseku, je to text mimo <p>
+          // (popisok/graf) — preskoč ju, nezasekni zvyšok článku.
+          var later = false;
+          for (var k = pi + 1; k < ps.length; k++) { if (norms[k].indexOf(target) >= 0) { later = true; break; } }
+          if (!later) { gi++; continue; }
+          break;
         }
-        if (matchedHere) { html += esc(txt.slice(pos)); p.innerHTML = html; }
-      });
-    });
+        if (idx > pos) html += esc(txt.slice(pos, idx));
+        html += '<span class="adam-s" data-i="' + marks[gi].i + '">' + esc(target) + "</span>";
+        pos = idx + target.length; gi++; matchedHere = true; wrapped++;
+      }
+      if (matchedHere) { html += esc(txt.slice(pos)); ps[pi].innerHTML = html; }
+    }
     return wrapped;
   }
 
