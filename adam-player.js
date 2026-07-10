@@ -29,6 +29,32 @@
     return document.querySelector("[data-adam-audio-slug]");
   }
 
+  function rentIntroAnchor() {
+    var nodes = [].slice.call(document.querySelectorAll(
+      "main h1, main h2, main h3, main h4, main p, .sqs-html-content h1, .sqs-html-content h2, .sqs-html-content h3, .sqs-html-content h4, .sqs-html-content p"
+    ));
+    for (var i = 0; i < nodes.length; i++) {
+      if (normTxt(nodes[i].textContent || "").toLowerCase() !== "prečo privátna renta") continue;
+      var scope = nodes[i].closest(".sqs-html-content") || nodes[i].parentNode;
+      if (!scope) return nodes[i];
+      var sectionNodes = [].slice.call(scope.querySelectorAll("h1, h2, h3, h4, p"));
+      var start = sectionNodes.indexOf(nodes[i]);
+      if (start < 0) return nodes[i];
+      var paragraphs = [];
+      for (var j = start + 1; j < sectionNodes.length; j++) {
+        var el = sectionNodes[j];
+        var tag = (el.tagName || "").toLowerCase();
+        if (/^h[1-4]$/.test(tag) && paragraphs.length) break;
+        if (tag === "p" && normTxt(el.textContent || "")) {
+          paragraphs.push(el);
+          if (paragraphs.length === 2) return el;
+        }
+      }
+      return paragraphs.length ? paragraphs[paragraphs.length - 1] : nodes[i];
+    }
+    return null;
+  }
+
   function pageAudioTarget() {
     var mount = explicitMount();
     if (mount) {
@@ -37,13 +63,15 @@
     }
     if (location.pathname.replace(/\/+$/, "") === "/strategia-privatnej-renty") {
       var calc = document.getElementById("ph-renta-calculator");
-      if (calc && calc.parentNode) {
+      var anchor = rentIntroAnchor();
+      if ((anchor && anchor.parentNode) || (calc && calc.parentNode)) {
         var pageMount = document.getElementById("adam-audio-mount");
         if (!pageMount) {
           pageMount = document.createElement("div");
           pageMount.id = "adam-audio-mount";
-          calc.parentNode.insertBefore(pageMount, calc);
         }
+        if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(pageMount, anchor.nextSibling);
+        else calc.parentNode.insertBefore(pageMount, calc);
         return { slug: "strategia-privatnej-renty", mount: pageMount, wrapText: false };
       }
     }
