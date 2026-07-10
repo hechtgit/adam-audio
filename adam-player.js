@@ -55,6 +55,17 @@
     return null;
   }
 
+  function retryRentIntroPlacement(pageMount, tries) {
+    if (!pageMount) return;
+    var anchor = rentIntroAnchor();
+    if (anchor && anchor.parentNode) {
+      anchor.parentNode.insertBefore(pageMount, anchor.nextSibling);
+    }
+    if (tries > 0) {
+      setTimeout(function () { retryRentIntroPlacement(pageMount, tries - 1); }, 250);
+    }
+  }
+
   function pageAudioTarget() {
     var mount = explicitMount();
     if (mount) {
@@ -72,6 +83,7 @@
         }
         if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(pageMount, anchor.nextSibling);
         else calc.parentNode.insertBefore(pageMount, calc);
+        retryRentIntroPlacement(pageMount, 20);
         return { slug: "strategia-privatnej-renty", mount: pageMount, wrapText: false };
       }
     }
