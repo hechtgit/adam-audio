@@ -35,6 +35,18 @@
       var forced = mount.getAttribute("data-adam-audio-slug");
       if (forced) return { slug: forced, mount: mount, wrapText: false };
     }
+    if (location.pathname.replace(/\/+$/, "") === "/strategia-privatnej-renty") {
+      var calc = document.getElementById("ph-renta-calculator");
+      if (calc && calc.parentNode) {
+        var pageMount = document.getElementById("adam-audio-mount");
+        if (!pageMount) {
+          pageMount = document.createElement("div");
+          pageMount.id = "adam-audio-mount";
+          calc.parentNode.insertBefore(pageMount, calc);
+        }
+        return { slug: "strategia-privatnej-renty", mount: pageMount, wrapText: false };
+      }
+    }
     var s = slug();
     return s ? { slug: s, mount: null, wrapText: true } : null;
   }
