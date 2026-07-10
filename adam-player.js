@@ -101,13 +101,15 @@
     } catch (e) { /* fail-soft */ }
   }
 
-  // Znak vždy s pulzom (idle animácia = kanonická značka Adama) — seal: outline kocka + trojuholník + skener.
-  var MK = '<rect x="8" y="8" width="44" height="44" fill="none" stroke="' + INK + '" stroke-width="1.6"/>' +
-    '<path d="M30 8 L52 52 L8 52 Z" fill="' + INK + '"/>' +
-    '<defs><clipPath id="adamC"><path d="M30 8 L52 52 L8 52 Z"/></clipPath></defs>' +
-    '<g clip-path="url(#adamC)"><rect x="4" y="50" width="52" height="2.6" fill="' + SCAN + '">' +
-    '<animate attributeName="y" values="50;7;50" dur="5s" keyTimes="0;0.5;1" calcMode="spline" ' +
-    'keySplines="0.4 0 0.2 1;0.4 0 0.2 1" repeatCount="indefinite"/></rect></g>';
+  // Kanonický lockup: seal + ADAM, deterministicky v jednom SVG (bez runtime merania textu).
+  var MK = '<rect width="60" height="72" fill="' + GOLD + '"/>' +
+    '<rect x="8" y="8" width="44" height="44" fill="none" stroke="' + INK + '" stroke-width="1.6"/>' +
+    '<path d="M30 8.8 L51.2 51.2 L8.8 51.2 Z" fill="' + INK + '"/>' +
+    '<defs><clipPath id="adamC"><path d="M30 8.8 L51.2 51.2 L8.8 51.2 Z"/></clipPath></defs>' +
+    '<g clip-path="url(#adamC)"><rect x="4" y="48.6" width="52" height="2.6" fill="' + SCAN + '">' +
+    '<animate attributeName="y" values="48.6;8.8;48.6" dur="5s" keyTimes="0;0.5;1" calcMode="spline" ' +
+    'keySplines="0.4 0 0.2 1;0.4 0 0.2 1" repeatCount="indefinite"/></rect></g>' +
+    '<text x="30.4" y="63" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="600" textLength="46.4" lengthAdjust="spacing" fill="' + INK + '">ADAM</text>';
 
   function build(data) {
     var blocks = findBlocks();
@@ -122,9 +124,8 @@
     wrap.innerHTML =
       '<div id="adam-row" style="display:flex;align-items:stretch">' +
         '<div id="adam-mkw" style="flex:0 0 auto;align-self:stretch;background:' + GOLD + ';width:150px;' +
-          'display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0;padding:16px 0">' +
-          '<svg id="adam-mk" viewBox="0 0 60 60" width="94" height="94" style="display:block">' + MK + '</svg>' +
-          '<div id="adam-wm" style="font-size:19px;font-weight:600;letter-spacing:.24em;color:' + INK + ';padding-left:.24em;line-height:1">ADAM</div>' +
+          'display:flex;justify-content:center;align-items:center;padding:16px 0">' +
+          '<svg id="adam-mk" viewBox="0 0 60 72" width="94" height="113" style="display:block">' + MK + '</svg>' +
         '</div>' +
         '<div id="adam-right" style="flex:1;min-width:0;position:relative;overflow:hidden">' +
           '<canvas id="adam-nn" style="position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:0"></canvas>' +
@@ -163,30 +164,7 @@
       '<audio id="adam-au" preload="metadata" src="' + data.mp3 + '"></audio>';
     blocks[0].parentNode.insertBefore(wrap, blocks[0]);
 
-    var mkw = wrap.querySelector("#adam-mkw"), right = wrap.querySelector("#adam-right");
-    var mk = wrap.querySelector("#adam-mk"), wm = wrap.querySelector("#adam-wm");
-    // Wordmark ADAM: medzera pod kockou = výška pulzujúcej čiary (2.6/60 znaku);
-    // ťah písma = hrúbka rámika kocky (1.6/60), presne dorovnaný cez canvas meranie.
-    function tuneWm(){
-      try {
-        var size = mk.getBoundingClientRect().width || 94, u = size / 60;
-        wm.style.marginTop = ((2.6 - 8) * u).toFixed(2) + "px";
-        var cs = getComputedStyle(wm), SC = 10, fs = parseFloat(cs.fontSize) * SC;
-        var c = document.createElement("canvas"); c.width = fs * 3; c.height = fs * 2;
-        var x = c.getContext("2d");
-        x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height);
-        x.fillStyle = "#000"; x.textBaseline = "middle"; x.font = cs.fontWeight + " " + fs + "px " + cs.fontFamily;
-        x.fillText("I", fs, fs);
-        var rowd = x.getImageData(0, fs, c.width, 1).data, run = 0, mxr = 0;
-        for (var i = 0; i < c.width; i++) { if (rowd[i * 4] < 128) { run++; if (run > mxr) mxr = run; } else run = 0; }
-        var stroke = Math.max(0, (1.6 * u) - mxr / SC);
-        if (stroke > 0.02) wm.style.webkitTextStroke = stroke.toFixed(2) + "px " + cs.color;
-      } catch (e) { /* fail-soft */ }
-    }
-    requestAnimationFrame(tuneWm);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(tuneWm);
-    window.addEventListener("load", tuneWm);
-    var rsT; window.addEventListener("resize", function(){ clearTimeout(rsT); rsT = setTimeout(tuneWm, 150); });
+    var right = wrap.querySelector("#adam-right");
 
     // Decentná zlatá neurónová sieť v tmavej časti — RAF beží LEN počas prehrávania (fail-soft).
     var nn = (function(){
