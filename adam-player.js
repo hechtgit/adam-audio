@@ -15,7 +15,7 @@
   var BASE = "https://hechtgit.github.io/adam-audio/";
   var GOLD = "#b18542";
   var INK = "#1a1206";      // tmavá: rámik kocky + trojuholník + wordmark
-  var SCAN = "#d8b06a";     // zlatý skener v jadre
+  var SCAN = "#b18542";     // zlatý skener v jadre — rovnaká zlatá ako podklad/znak (jednotná)
   var CTA_URL = "/strategia-privatnej-renty?src=adam-audio";
   var CTA_LABEL = "Zistiť moju privátnu rentu";
   var CTA_LEAD = "Viete, akú mesačnú rentu môžete čerpať zo svojho majetku?";
