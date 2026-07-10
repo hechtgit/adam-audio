@@ -25,6 +25,20 @@
     return m ? decodeURIComponent(m[1]) : null;
   }
 
+  function explicitMount() {
+    return document.querySelector("[data-adam-audio-slug]");
+  }
+
+  function pageAudioTarget() {
+    var mount = explicitMount();
+    if (mount) {
+      var forced = mount.getAttribute("data-adam-audio-slug");
+      if (forced) return { slug: forced, mount: mount, wrapText: false };
+    }
+    var s = slug();
+    return s ? { slug: s, mount: null, wrapText: true } : null;
+  }
+
   function findBlocks() {
     return [].slice.call(document.querySelectorAll(
       ".BlogItem .sqs-html-content, article .sqs-html-content, .blog-item-wrapper .sqs-html-content, main .sqs-html-content, .sqs-html-content"
@@ -111,9 +125,10 @@
     'keySplines="0.4 0 0.2 1;0.4 0 0.2 1" repeatCount="indefinite"/></rect></g>' +
     '<text x="30.4" y="63" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="600" textLength="46.4" lengthAdjust="spacing" fill="' + INK + '">ADAM</text>';
 
-  function build(data) {
-    var blocks = findBlocks();
-    if (!blocks.length) return;
+  function build(data, target) {
+    target = target || {};
+    var blocks = target.wrapText === false ? [] : findBlocks();
+    if (!blocks.length && !target.mount) return;
     if (document.getElementById("adam-player")) return;
 
     var wrap = document.createElement("div");
@@ -162,7 +177,8 @@
         '</div>' +
       '</div>' +
       '<audio id="adam-au" preload="metadata" src="' + data.mp3 + '"></audio>';
-    blocks[0].parentNode.insertBefore(wrap, blocks[0]);
+    if (target.mount) target.mount.appendChild(wrap);
+    else blocks[0].parentNode.insertBefore(wrap, blocks[0]);
 
     var right = wrap.querySelector("#adam-right");
 
@@ -207,7 +223,7 @@
       };
     })();
 
-    wrapSentences(blocks, data.marks || []);
+    if (blocks.length) wrapSentences(blocks, data.marks || []);
     var SP = "transition:background .4s,color .4s;border-radius:0;padding:0 2px;";
     var SPON = SP + "background:rgba(177,133,66,.28);color:#fff;";
     var spanByI = {};
@@ -276,18 +292,18 @@
   }
 
   function init(){
-    var s = slug(); if(!s) return;
+    var target = pageAudioTarget(); if(!target || !target.slug) return;
     fetch(BASE + "manifest.json", {cache: "no-cache"})
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(man){
-        var e = man && man[s]; if(!e || !e.mp3) return;
+        var e = man && man[target.slug]; if(!e || !e.mp3) return;
         return fetch(BASE + e.marks, {cache: "no-cache"})
           .then(function(r){ return r.ok ? r.json() : {sentences: []}; })
           .then(function(mk){
             var data = { mp3: BASE + e.mp3, title: e.title, duration: e.duration,
                          marks: (mk && mk.sentences) || [] };
             injectSchema(data);
-            try { build(data); } catch(err) { /* fail-soft */ }
+            try { build(data, target); } catch(err) { /* fail-soft */ }
           });
       })
       .catch(function(){ /* fail-soft */ });

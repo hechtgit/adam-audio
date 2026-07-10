@@ -46,5 +46,11 @@
   "marks": "najcastejsie-otazky-pri-investovani.marks.json",
   "title": "TOP 20 najčastejších otázok pri investovaní",
   "duration": 1439.304
+ },
+ "strategia-privatnej-renty": {
+  "mp3": "strategia-privatnej-renty.mp3",
+  "marks": "strategia-privatnej-renty.marks.json",
+  "title": "Stratégia privátnej renty",
+  "duration": 215.196
  }
 }
