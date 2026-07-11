@@ -264,7 +264,7 @@
         if (!W || !H) return false;
         cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         if (!forceNodes && nodes.length) return true;
-        var N = Math.max(11, Math.min(18, Math.round((W * H / 6400) * 1.1)));
+        var N = Math.max(16, Math.min(32, Math.round((W * H / 5600) * 1.2)));
         nodes = []; for (var i = 0; i < N; i++) nodes.push({ x:rnd(6,W-6), y:rnd(6,H-6), ang:rnd(0,6.283), ph:rnd(0,6.283) });
         return true;
       }
