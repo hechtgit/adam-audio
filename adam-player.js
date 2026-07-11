@@ -1,8 +1,9 @@
-/* ADAM-PLAYER v7 — audio prehrávač pre blog články hechtberger.com
+/* ADAM-PLAYER v8 — audio prehrávač pre blog články hechtberger.com
  * Hosted na GitHub Pages (hechtgit.github.io/adam-audio); footer na webe ho už len načíta.
  * Manifest + marks + MP3 žijú v tom istom repe — nový článok = git push, žiadny zásah do webu.
  * Fail-soft: ak manifest/článok/telo chýba, NIČ neurobí (web sa nikdy nerozbije).
  *
+ * v8 = ručný mount data-adam-audio-slug už nevypína karaoke wrapping textu.
  * v7 = v6 + mobilný layout fix pre úzke obrazovky; desktop dizajn ostáva rovnaký.
  * v6 = v5 (funkčne zhodné: end-card, JSON-LD, seek, highlight) s novým dizajnom:
  *  - hranaté rohy (celý web je hranatý) — žiadny border-radius
@@ -74,7 +75,8 @@
     var mount = explicitMount();
     if (mount) {
       var forced = mount.getAttribute("data-adam-audio-slug");
-      if (forced) return { slug: forced, mount: mount, wrapText: false };
+      var noWrap = mount.getAttribute("data-adam-audio-wrap") === "false";
+      if (forced) return { slug: forced, mount: mount, wrapText: !noWrap };
     }
     if (location.pathname.replace(/\/+$/, "") === "/strategia-privatnej-renty") {
       var calc = document.getElementById("ph-renta-calculator");
