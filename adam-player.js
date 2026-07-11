@@ -167,14 +167,31 @@
     } catch (e) { /* fail-soft */ }
   }
 
+  function ensurePlayerStyles() {
+    if (document.getElementById("adam-player-dynamic-style")) return;
+    var st = document.createElement("style");
+    st.id = "adam-player-dynamic-style";
+    st.textContent =
+      "#adam-player #adam-btn{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
+      "#adam-player #adam-btn[data-idle-pulse='1'].adam-css-pulse{animation:adamButtonColorPulse 5s infinite;}" +
+      "#adam-player #adam-btn[data-idle-pulse='0']{animation:none;background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
+      "@keyframes adamButtonColorPulse{" +
+        "0%{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";animation-timing-function:cubic-bezier(.4,0,.2,1);}" +
+        "50%{background-color:#1f1f1f;border-color:#1f1f1f;color:" + GOLD + ";animation-timing-function:cubic-bezier(.4,0,.2,1);}" +
+        "100%{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
+      "}" +
+      "@media (prefers-reduced-motion:reduce){#adam-player #adam-btn[data-idle-pulse='1']{animation:none!important;}}";
+    document.head.appendChild(st);
+  }
+
   // Kanonický lockup: seal + ADAM, deterministicky v jednom SVG (bez runtime merania textu).
   var MK = '<rect width="60" height="72" fill="' + GOLD + '"/>' +
     '<rect x="8" y="8" width="44" height="44" fill="none" stroke="' + INK + '" stroke-width="1.6"/>' +
     '<path d="M30 8.8 L51.2 51.2 L8.8 51.2 Z" fill="' + INK + '"/>' +
     '<defs><clipPath id="adamC"><path d="M30 8.8 L51.2 51.2 L8.8 51.2 Z"/></clipPath></defs>' +
     '<g clip-path="url(#adamC)"><rect x="4" y="48.6" width="52" height="2.6" fill="' + SCAN + '">' +
-    '<animate attributeName="y" values="48.6;8.8;48.6" dur="5s" keyTimes="0;0.5;1" calcMode="spline" ' +
-    'keySplines="0.4 0 0.2 1;0.4 0 0.2 1" repeatCount="indefinite"/></rect></g>' +
+    '<animate id="adam-scan-anim" attributeName="y" values="48.6;8.8;48.6" dur="5s" keyTimes="0;0.5;1" calcMode="spline" ' +
+    'keySplines="0.4 0 0.2 1;0.4 0 0.2 1" begin="indefinite" repeatCount="indefinite"/></rect></g>' +
     '<text x="30.4" y="63" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="600" textLength="46.4" lengthAdjust="spacing" fill="' + INK + '">ADAM</text>';
 
   function build(data, target) {
@@ -182,6 +199,7 @@
     var blocks = target.wrapText === false ? [] : findBlocks();
     if (!blocks.length && !target.mount) return;
     if (document.getElementById("adam-player")) return;
+    ensurePlayerStyles();
 
     var introSuffix = target.introSuffix || "vám článok prečíta.";
     var wrap = document.createElement("div");
@@ -204,10 +222,10 @@
                   '<b style="color:' + GOLD + ';font-weight:500">Adam</b> ' + introSuffix + '</p>' +
                 '<p style="margin:0;font-size:13px;color:#8a8578">AI asistent Petra Hechtbergera</p>' +
               '</div>' +
-              '<button id="adam-btn" aria-label="Prehrať článok" style="width:54px;height:54px;min-width:54px;' +
-                'border-radius:0;border:1px solid #c2bcb0;background:transparent;cursor:pointer;display:flex;' +
-                'align-items:center;justify-content:center;padding:0;color:#e6e1d8">' +
-                '<svg id="adam-ic" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' +
+              '<button id="adam-btn" data-idle-pulse="1" aria-label="Prehrať článok" style="width:70px;height:70px;min-width:70px;' +
+                'border-radius:0;border-width:1px;border-style:solid;cursor:pointer;display:flex;' +
+                'align-items:center;justify-content:center;padding:0">' +
+                '<svg id="adam-ic" viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' +
               '</button>' +
             '</div>' +
             '<div style="display:flex;align-items:center;gap:10px;margin-top:16px">' +
@@ -235,29 +253,33 @@
 
     var right = wrap.querySelector("#adam-right");
 
-    // Decentná zlatá neurónová sieť v tmavej časti — RAF beží LEN počas prehrávania (fail-soft).
+    // Decentná zlatá neurónová sieť: statická hneď po načítaní, hýbe sa až počas prehrávania.
     var nn = (function(){
-      var cv = wrap.querySelector("#adam-nn"); if (!cv || !cv.getContext) return { start:function(){}, stop:function(){} };
+      var cv = wrap.querySelector("#adam-nn"); if (!cv || !cv.getContext) return { idle:function(){}, start:function(){}, stop:function(){} };
       var ctx = cv.getContext("2d"), raf = null, nodes = [], W = 0, H = 0,
           dpr = Math.min(window.devicePixelRatio || 1, 2), MAX = 110, SPEED = 0.30, t0 = 0;
       function rnd(a, b){ return a + Math.random() * (b - a); }
-      function init(){
+      function init(forceNodes){
         var r = right.getBoundingClientRect(); W = r.width; H = r.height;
         if (!W || !H) return false;
         cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        var N = Math.max(10, Math.min(16, Math.round(W * H / 6400)));
+        if (!forceNodes && nodes.length) return true;
+        var N = Math.max(11, Math.min(18, Math.round((W * H / 6400) * 1.1)));
         nodes = []; for (var i = 0; i < N; i++) nodes.push({ x:rnd(6,W-6), y:rnd(6,H-6), ang:rnd(0,6.283), ph:rnd(0,6.283) });
         return true;
       }
-      function frame(ts){
+      function draw(ts, move){
         if (!t0) t0 = ts;
         ctx.clearRect(0, 0, W, H);
         var i, a, b;
         for (i = 0; i < nodes.length; i++){
-          var n = nodes[i]; n.ang += rnd(-0.02, 0.02);
-          n.x += Math.cos(n.ang) * SPEED; n.y += Math.sin(n.ang) * SPEED;
-          if (n.x < 0){ n.x = 0; n.ang = Math.PI - n.ang; } else if (n.x > W){ n.x = W; n.ang = Math.PI - n.ang; }
-          if (n.y < 0){ n.y = 0; n.ang = -n.ang; } else if (n.y > H){ n.y = H; n.ang = -n.ang; }
+          var n = nodes[i];
+          if (move) {
+            n.ang += rnd(-0.02, 0.02);
+            n.x += Math.cos(n.ang) * SPEED; n.y += Math.sin(n.ang) * SPEED;
+            if (n.x < 0){ n.x = 0; n.ang = Math.PI - n.ang; } else if (n.x > W){ n.x = W; n.ang = Math.PI - n.ang; }
+            if (n.y < 0){ n.y = 0; n.ang = -n.ang; } else if (n.y > H){ n.y = H; n.ang = -n.ang; }
+          }
         }
         for (a = 0; a < nodes.length; a++) for (b = a + 1; b < nodes.length; b++){
           var dx = nodes[a].x - nodes[b].x, dy = nodes[a].y - nodes[b].y, d = Math.sqrt(dx*dx + dy*dy);
@@ -265,16 +287,21 @@
             ctx.beginPath(); ctx.moveTo(nodes[a].x, nodes[a].y); ctx.lineTo(nodes[b].x, nodes[b].y); ctx.stroke(); }
         }
         var tt = (ts - t0) * 0.001;
-        for (i = 0; i < nodes.length; i++){ var m = nodes[i], pu = 0.60 + 0.26 * Math.sin(tt * 1.256 + m.ph);
+        for (i = 0; i < nodes.length; i++){ var m = nodes[i], pu = move ? 0.60 + 0.26 * Math.sin(tt * 1.256 + m.ph) : 0.62;
           ctx.fillStyle = "rgba(222,184,116," + pu.toFixed(3) + ")"; ctx.beginPath(); ctx.arc(m.x, m.y, 2.2, 0, 6.283); ctx.fill();
         }
+      }
+      function frame(ts){
+        draw(ts, true);
         raf = requestAnimationFrame(frame);
       }
       return {
-        start: function(){ try { if (raf) return; if (!init()) return; t0 = 0; raf = requestAnimationFrame(frame); } catch(e){} },
-        stop: function(){ try { if (raf){ cancelAnimationFrame(raf); raf = null; } if (W && H) ctx.clearRect(0, 0, W, H); } catch(e){} }
+        idle: function(){ try { if (!init(false)) return; t0 = 0; draw(0, false); } catch(e){} },
+        start: function(){ try { if (raf) return; if (!init(false)) return; t0 = 0; raf = requestAnimationFrame(frame); } catch(e){} },
+        stop: function(){ try { if (raf){ cancelAnimationFrame(raf); raf = null; } if (W && H) draw(0, false); } catch(e){} }
       };
     })();
+    nn.idle();
 
     if (blocks.length) wrapSentences(blocks, data.marks || []);
     var SP = "transition:background .4s,color .4s;border-radius:0;padding:0 2px;";
@@ -289,7 +316,7 @@
         bar = wrap.querySelector("#adam-bar"), thumb = wrap.querySelector("#adam-thumb"), track = wrap.querySelector("#adam-track"),
         curT = wrap.querySelector("#adam-cur"), durT = wrap.querySelector("#adam-dur"), hlEl = null,
         main = wrap.querySelector("#adam-main"), endc = wrap.querySelector("#adam-end"),
-        again = wrap.querySelector("#adam-again");
+        again = wrap.querySelector("#adam-again"), btnPulse = null;
     var PLAY = '<path d="M8 5v14l11-7z"/>', PAUSE = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
     var DUR = data.duration || 0;
     if (DUR) durT.textContent = fmt(DUR);
@@ -308,8 +335,36 @@
       hi(el);
     });
 
+    function startIdlePulse(){
+      try {
+        var scan = wrap.querySelector("#adam-scan-anim");
+        if (scan && scan.beginElement) scan.beginElement();
+      } catch (e) { /* fail-soft */ }
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (btn.animate) {
+        btnPulse = btn.animate([
+          { backgroundColor: GOLD, borderColor: GOLD, color: INK, offset: 0, easing: "cubic-bezier(.4,0,.2,1)" },
+          { backgroundColor: "#1f1f1f", borderColor: "#1f1f1f", color: GOLD, offset: 0.5, easing: "cubic-bezier(.4,0,.2,1)" },
+          { backgroundColor: GOLD, borderColor: GOLD, color: INK, offset: 1 }
+        ], { duration: 5000, iterations: Infinity });
+      } else {
+        btn.classList.add("adam-css-pulse");
+      }
+    }
+
+    function lockBtn(){
+      btn.setAttribute("data-idle-pulse", "0");
+      if (btnPulse) { btnPulse.cancel(); btnPulse = null; }
+      btn.classList.remove("adam-css-pulse");
+      btn.style.animation = "none";
+      btn.style.background = GOLD;
+      btn.style.borderColor = GOLD;
+      btn.style.color = INK;
+    }
+    startIdlePulse();
+
     // Sieť naviazaná priamo na audio stav (spoľahlivejšie než klik na tlačidlo).
-    au.addEventListener("play", function(){ nn.start(); });
+    au.addEventListener("play", function(){ lockBtn(); nn.start(); });
     au.addEventListener("pause", function(){ nn.stop(); });
 
     // End-card po dohraní: stabilná výška (žiadny skok layoutu), CTA + replay.
