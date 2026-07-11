@@ -104,6 +104,7 @@
 
   function esc(s){ var d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
   function fmt(s){ s=Math.max(0,Math.floor(s||0)); var m=Math.floor(s/60), r=s%60; return m+":"+(r<10?"0":"")+r; }
+  function fmtRate(rate) { return (rate === 1 ? "1" : String(rate)) + "x"; }
   function closestRate(v) {
     v = parseFloat(v);
     if (!isFinite(v)) return 1;
@@ -196,9 +197,16 @@
       "#adam-player #adam-btn{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
       "#adam-player #adam-btn[data-idle-pulse='1'].adam-css-pulse{animation:adamButtonColorPulse 5s infinite;}" +
       "#adam-player #adam-btn[data-idle-pulse='0']{animation:none;background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
-      "#adam-player #adam-rate{height:30px;min-width:64px;border-radius:0;border:1px solid #4a433a;background:#171513;color:#e6e1d8;font-size:12px;font-variant-numeric:tabular-nums;padding:0 7px;cursor:pointer;}" +
+      "#adam-player #adam-rate-wrap{position:relative;display:inline-flex;align-items:center;}" +
+      "#adam-player #adam-rate{height:30px;min-width:82px;border-radius:0;border:1px solid rgba(177,133,66,.72);background:rgba(177,133,66,.14);color:#e6e1d8;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;padding:0 8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;}" +
       "#adam-player #adam-rate:focus{outline:1px solid " + GOLD + ";outline-offset:1px;}" +
-      "#adam-player #adam-rate option{background:#171513;color:#e6e1d8;}" +
+      "#adam-player #adam-rate svg{display:block;flex:0 0 auto;}" +
+      "#adam-player #adam-rate .adam-rate-gauge{width:14px;height:14px;color:" + GOLD + ";}" +
+      "#adam-player #adam-rate .adam-rate-caret{width:12px;height:12px;color:" + GOLD + ";}" +
+      "#adam-player #adam-rate-menu{display:none;position:absolute;right:0;top:calc(100% + 7px);z-index:5;width:98px;border:1px solid rgba(177,133,66,.42);background:#171513;box-shadow:0 14px 26px rgba(0,0,0,.28);padding:4px;gap:2px;}" +
+      "#adam-player #adam-rate-wrap[data-open='1'] #adam-rate-menu{display:grid;}" +
+      "#adam-player #adam-rate-menu button{height:28px;border:0;border-radius:0;background:transparent;color:#8a8578;text-align:left;padding:0 8px;font-size:12px;font-variant-numeric:tabular-nums;cursor:pointer;}" +
+      "#adam-player #adam-rate-menu button[aria-checked='true']{background:" + GOLD + ";color:" + INK + ";font-weight:500;}" +
       "@keyframes adamButtonColorPulse{" +
         "0%{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";animation-timing-function:cubic-bezier(.4,0,.2,1);}" +
         "50%{background-color:#1f1f1f;border-color:#1f1f1f;color:" + GOLD + ";animation-timing-function:cubic-bezier(.4,0,.2,1);}" +
@@ -229,7 +237,7 @@
     var wrap = document.createElement("div");
     wrap.id = "adam-player";
     wrap.setAttribute("style",
-      "border:.5px solid #3a3733;border-radius:0;background:#1f1f1f;overflow:hidden;" +
+      "border:.5px solid #3a3733;border-radius:0;background:#1f1f1f;overflow:visible;" +
       "margin:0 0 24px;font-family:system-ui,-apple-system,sans-serif;");
     wrap.innerHTML =
       '<div id="adam-row" style="display:flex;align-items:stretch">' +
@@ -237,7 +245,7 @@
           'display:flex;justify-content:center;align-items:center;padding:16px 0">' +
           '<svg id="adam-mk" viewBox="0 0 60 72" width="94" height="113" style="display:block">' + MK + '</svg>' +
         '</div>' +
-        '<div id="adam-right" style="flex:1;min-width:0;position:relative;overflow:hidden">' +
+        '<div id="adam-right" style="flex:1;min-width:0;position:relative;overflow:visible">' +
           '<canvas id="adam-nn" style="position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:0"></canvas>' +
           '<div id="adam-main" style="position:relative;z-index:1;padding:18px 20px">' +
             '<div style="display:flex;align-items:center;gap:16px">' +
@@ -259,13 +267,22 @@
                 '<div id="adam-thumb" style="position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:0;background:' + GOLD + ';opacity:0"></div>' +
               '</div>' +
               '<span id="adam-dur" style="font-size:12px;color:#8a8578;font-variant-numeric:tabular-nums;min-width:30px;text-align:right">0:00</span>' +
-              '<select id="adam-rate" aria-label="Rýchlosť prehrávania" title="Rýchlosť prehrávania">' +
-                '<option value="1">1x</option>' +
-                '<option value="1.25">1.25x</option>' +
-                '<option value="1.5">1.5x</option>' +
-                '<option value="1.75">1.75x</option>' +
-                '<option value="2">2x</option>' +
-              '</select>' +
+              '<div id="adam-rate-wrap" data-open="0">' +
+                '<button id="adam-rate" type="button" aria-label="Rýchlosť prehrávania 1x" aria-haspopup="menu" aria-expanded="false" title="Rýchlosť prehrávania">' +
+                  '<svg class="adam-rate-gauge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                    '<path d="M5 19a8 8 0 1 1 14 0"/><path d="M12 15l4-4"/><path d="M12 15h.01"/>' +
+                  '</svg>' +
+                  '<span id="adam-rate-label">1x</span>' +
+                  '<svg class="adam-rate-caret" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>' +
+                '</button>' +
+                '<div id="adam-rate-menu" role="menu" aria-label="Rýchlosť prehrávania">' +
+                  '<button type="button" role="menuitemradio" data-rate="1" aria-checked="true">1x</button>' +
+                  '<button type="button" role="menuitemradio" data-rate="1.25" aria-checked="false">1.25x</button>' +
+                  '<button type="button" role="menuitemradio" data-rate="1.5" aria-checked="false">1.5x</button>' +
+                  '<button type="button" role="menuitemradio" data-rate="1.75" aria-checked="false">1.75x</button>' +
+                  '<button type="button" role="menuitemradio" data-rate="2" aria-checked="false">2x</button>' +
+                '</div>' +
+              '</div>' +
             '</div>' +
           '</div>' +
           '<div id="adam-end" style="display:none;position:relative;z-index:1;padding:18px 20px">' +
@@ -347,7 +364,10 @@
         bar = wrap.querySelector("#adam-bar"), thumb = wrap.querySelector("#adam-thumb"), track = wrap.querySelector("#adam-track"),
         curT = wrap.querySelector("#adam-cur"), durT = wrap.querySelector("#adam-dur"), hlEl = null,
         main = wrap.querySelector("#adam-main"), endc = wrap.querySelector("#adam-end"),
-        again = wrap.querySelector("#adam-again"), rateSel = wrap.querySelector("#adam-rate"), btnPulse = null;
+        again = wrap.querySelector("#adam-again"), rateWrap = wrap.querySelector("#adam-rate-wrap"),
+        rateBtn = wrap.querySelector("#adam-rate"), rateLabel = wrap.querySelector("#adam-rate-label"),
+        rateMenu = wrap.querySelector("#adam-rate-menu"), rateButtons = rateMenu ? [].slice.call(rateMenu.querySelectorAll("[data-rate]")) : [],
+        btnPulse = null;
     var PLAY = '<path d="M8 5v14l11-7z"/>', PAUSE = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
     var DUR = data.duration || 0;
     if (DUR) durT.textContent = fmt(DUR);
@@ -362,11 +382,32 @@
         au.webkitPreservesPitch = true;
         au.mozPreservesPitch = true;
       } catch (e) { /* fail-soft */ }
-      if (rateSel) rateSel.value = String(rate);
+      if (rateLabel) rateLabel.textContent = fmtRate(rate);
+      if (rateBtn) rateBtn.setAttribute("aria-label", "Rýchlosť prehrávania " + fmtRate(rate));
+      rateButtons.forEach(function(opt){
+        opt.setAttribute("aria-checked", closestRate(opt.getAttribute("data-rate")) === rate ? "true" : "false");
+      });
       if (persist) persistRate(rate);
     }
+    function setRateOpen(open) {
+      if (!rateWrap || !rateBtn) return;
+      rateWrap.setAttribute("data-open", open ? "1" : "0");
+      rateBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    }
     setRate(savedRate(), false);
-    if (rateSel) rateSel.addEventListener("change", function(){ setRate(rateSel.value, true); });
+    if (rateBtn) rateBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      setRateOpen(rateWrap && rateWrap.getAttribute("data-open") !== "1");
+    });
+    if (rateMenu) rateMenu.addEventListener("click", function(e){
+      var opt = e.target && e.target.closest ? e.target.closest("[data-rate]") : null;
+      if (!opt) return;
+      e.stopPropagation();
+      setRate(opt.getAttribute("data-rate"), true);
+      setRateOpen(false);
+    });
+    document.addEventListener("click", function(e){ if (rateWrap && !rateWrap.contains(e.target)) setRateOpen(false); });
+    document.addEventListener("keydown", function(e){ if (e.key === "Escape") setRateOpen(false); });
 
     function hi(el){ if(el===hlEl)return; if(hlEl)hlEl.style.cssText=SP; if(el)el.style.cssText=SPON; hlEl=el; }
     function paint(t){
