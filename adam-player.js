@@ -1,8 +1,9 @@
-/* ADAM-PLAYER v6 — audio prehrávač pre blog články hechtberger.com
+/* ADAM-PLAYER v7 — audio prehrávač pre blog články hechtberger.com
  * Hosted na GitHub Pages (hechtgit.github.io/adam-audio); footer na webe ho už len načíta.
  * Manifest + marks + MP3 žijú v tom istom repe — nový článok = git push, žiadny zásah do webu.
  * Fail-soft: ak manifest/článok/telo chýba, NIČ neurobí (web sa nikdy nerozbije).
  *
+ * v7 = v6 + mobilný layout fix pre úzke obrazovky; desktop dizajn ostáva rovnaký.
  * v6 = v5 (funkčne zhodné: end-card, JSON-LD, seek, highlight) s novým dizajnom:
  *  - hranaté rohy (celý web je hranatý) — žiadny border-radius
  *  - znak: tmavý outline rámik kocky + trojuholník + zlatý skener (seal ako na mape)
@@ -194,6 +195,7 @@
     var st = document.createElement("style");
     st.id = "adam-player-dynamic-style";
     st.textContent =
+      "#adam-player,#adam-player *{box-sizing:border-box;}" +
       "#adam-player #adam-btn{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
       "#adam-player #adam-btn[data-idle-pulse='1'].adam-css-pulse{animation:adamButtonColorPulse 5s infinite;}" +
       "#adam-player #adam-btn[data-idle-pulse='0']{animation:none;background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
@@ -208,6 +210,36 @@
       "#adam-player #adam-rate-wrap[data-open='1'] #adam-rate-menu{display:grid;}" +
       "#adam-player #adam-rate-menu button{height:28px;border:0;border-radius:0;background:transparent;color:#8a8578;text-align:left;padding:0 7px;font-size:12px;font-variant-numeric:tabular-nums;cursor:pointer;}" +
       "#adam-player #adam-rate-menu button[aria-checked='true']{background:" + GOLD + ";color:" + INK + ";font-weight:500;}" +
+      "@media (max-width:640px){" +
+        "#adam-player{width:100%!important;max-width:100%!important;}" +
+        "#adam-player #adam-row{display:block!important;}" +
+        "#adam-player #adam-mkw{width:100%!important;height:96px!important;align-self:auto!important;padding:12px 0!important;}" +
+        "#adam-player #adam-mk{width:64px!important;height:77px!important;}" +
+        "#adam-player #adam-right{min-height:auto!important;}" +
+        "#adam-player #adam-main,#adam-player #adam-end{padding:16px!important;}" +
+        "#adam-player #adam-main>div:first-child{display:grid!important;grid-template-columns:minmax(0,1fr) 58px!important;gap:12px!important;align-items:center!important;}" +
+        "#adam-player #adam-main>div:first-child p:first-child{font-size:17px!important;line-height:1.28!important;}" +
+        "#adam-player #adam-main>div:first-child p:last-child{font-size:12px!important;line-height:1.35!important;}" +
+        "#adam-player #adam-btn{width:58px!important;height:58px!important;min-width:58px!important;}" +
+        "#adam-player #adam-ic{width:24px!important;height:24px!important;}" +
+        "#adam-player #adam-main>div:nth-child(2){display:grid!important;grid-template-columns:34px minmax(0,1fr) 34px 70px!important;gap:8px!important;align-items:center!important;flex-wrap:nowrap!important;}" +
+        "#adam-player #adam-track{min-width:0!important;}" +
+        "#adam-player #adam-cur,#adam-player #adam-dur{min-width:0!important;}" +
+        "#adam-player #adam-rate-wrap{margin-left:0!important;}" +
+        "#adam-player #adam-end p{font-size:16px!important;}" +
+      "}" +
+      "@media (max-width:380px){" +
+        "#adam-player #adam-mkw{height:86px!important;padding:10px 0!important;}" +
+        "#adam-player #adam-mk{width:56px!important;height:67px!important;}" +
+        "#adam-player #adam-main,#adam-player #adam-end{padding:14px!important;}" +
+        "#adam-player #adam-main>div:first-child{grid-template-columns:minmax(0,1fr) 52px!important;gap:10px!important;}" +
+        "#adam-player #adam-main>div:first-child p:first-child{font-size:16px!important;}" +
+        "#adam-player #adam-btn{width:52px!important;height:52px!important;min-width:52px!important;}" +
+        "#adam-player #adam-main>div:nth-child(2){grid-template-columns:32px minmax(0,1fr) 32px 64px!important;gap:6px!important;}" +
+        "#adam-player #adam-rate-wrap,#adam-player #adam-rate,#adam-player #adam-rate-menu{width:64px!important;min-width:64px!important;}" +
+        "#adam-player #adam-rate{font-size:11px!important;padding:0 4px!important;gap:3px!important;}" +
+        "#adam-player #adam-rate .adam-rate-gauge{display:none!important;}" +
+      "}" +
       "@keyframes adamButtonColorPulse{" +
         "0%{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";animation-timing-function:cubic-bezier(.4,0,.2,1);}" +
         "50%{background-color:#1f1f1f;border-color:#1f1f1f;color:" + GOLD + ";animation-timing-function:cubic-bezier(.4,0,.2,1);}" +
