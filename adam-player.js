@@ -9,6 +9,7 @@
  *  - wordmark „ADAM" pod znakom (medzera = výška čiary, ťah písma = hrúbka rámika, merané canvasom)
  *  - svetlosivé play/pauza tlačidlo (predtým zanikalo)
  *  - decentná zlatá neurónová sieť v tmavej časti POČAS prehrávania (RAF beží len keď hrá)
+ *  - voliteľná rýchlosť prehrávania, zapamätaná v prehliadači
  */
 (function () {
   "use strict";
@@ -19,6 +20,8 @@
   var CTA_URL = "/strategia-privatnej-renty?src=adam-audio";
   var CTA_LABEL = "Zistiť moju privátnu rentu";
   var CTA_LEAD = "Viete, akú mesačnú rentu môžete čerpať zo svojho majetku?";
+  var RATE_KEY = "adam-audio-rate";
+  var RATE_OPTIONS = [1, 1.25, 1.5, 1.75, 2];
 
   function slug() {
     var m = location.pathname.match(/\/blog\/([^\/?#]+)/);
@@ -101,6 +104,24 @@
 
   function esc(s){ var d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
   function fmt(s){ s=Math.max(0,Math.floor(s||0)); var m=Math.floor(s/60), r=s%60; return m+":"+(r<10?"0":"")+r; }
+  function closestRate(v) {
+    v = parseFloat(v);
+    if (!isFinite(v)) return 1;
+    var best = RATE_OPTIONS[0], bd = Math.abs(v - best);
+    for (var i = 1; i < RATE_OPTIONS.length; i++) {
+      var d = Math.abs(v - RATE_OPTIONS[i]);
+      if (d < bd) { best = RATE_OPTIONS[i]; bd = d; }
+    }
+    return best;
+  }
+  function savedRate() {
+    try { return closestRate(localStorage.getItem(RATE_KEY)); }
+    catch (e) { return 1; }
+  }
+  function persistRate(rate) {
+    try { localStorage.setItem(RATE_KEY, String(rate)); }
+    catch (e) { /* fail-soft */ }
+  }
 
   // Normalizuj text na porovnanie: zlúč medzery a odstráň medzeru pred interpunkciou
   // (marks môžu mať artefakt "slovo ." — na stránke je "slovo.").
@@ -175,6 +196,9 @@
       "#adam-player #adam-btn{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
       "#adam-player #adam-btn[data-idle-pulse='1'].adam-css-pulse{animation:adamButtonColorPulse 5s infinite;}" +
       "#adam-player #adam-btn[data-idle-pulse='0']{animation:none;background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
+      "#adam-player #adam-rate{height:30px;min-width:64px;border-radius:0;border:1px solid #4a433a;background:#171513;color:#e6e1d8;font-size:12px;font-variant-numeric:tabular-nums;padding:0 7px;cursor:pointer;}" +
+      "#adam-player #adam-rate:focus{outline:1px solid " + GOLD + ";outline-offset:1px;}" +
+      "#adam-player #adam-rate option{background:#171513;color:#e6e1d8;}" +
       "@keyframes adamButtonColorPulse{" +
         "0%{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";animation-timing-function:cubic-bezier(.4,0,.2,1);}" +
         "50%{background-color:#1f1f1f;border-color:#1f1f1f;color:" + GOLD + ";animation-timing-function:cubic-bezier(.4,0,.2,1);}" +
@@ -228,13 +252,20 @@
                 '<svg id="adam-ic" viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' +
               '</button>' +
             '</div>' +
-            '<div style="display:flex;align-items:center;gap:10px;margin-top:16px">' +
+            '<div style="display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap">' +
               '<span id="adam-cur" style="font-size:12px;color:#8a8578;font-variant-numeric:tabular-nums;min-width:30px">0:00</span>' +
-              '<div id="adam-track" style="flex:1;height:4px;background:#33302c;border-radius:0;position:relative;cursor:pointer;touch-action:none">' +
+              '<div id="adam-track" style="flex:1;min-width:120px;height:4px;background:#33302c;border-radius:0;position:relative;cursor:pointer;touch-action:none">' +
                 '<div id="adam-bar" style="height:4px;width:0;background:' + GOLD + ';border-radius:0"></div>' +
                 '<div id="adam-thumb" style="position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:0;background:' + GOLD + ';opacity:0"></div>' +
               '</div>' +
               '<span id="adam-dur" style="font-size:12px;color:#8a8578;font-variant-numeric:tabular-nums;min-width:30px;text-align:right">0:00</span>' +
+              '<select id="adam-rate" aria-label="Rýchlosť prehrávania" title="Rýchlosť prehrávania">' +
+                '<option value="1">1x</option>' +
+                '<option value="1.25">1.25x</option>' +
+                '<option value="1.5">1.5x</option>' +
+                '<option value="1.75">1.75x</option>' +
+                '<option value="2">2x</option>' +
+              '</select>' +
             '</div>' +
           '</div>' +
           '<div id="adam-end" style="display:none;position:relative;z-index:1;padding:18px 20px">' +
@@ -316,11 +347,26 @@
         bar = wrap.querySelector("#adam-bar"), thumb = wrap.querySelector("#adam-thumb"), track = wrap.querySelector("#adam-track"),
         curT = wrap.querySelector("#adam-cur"), durT = wrap.querySelector("#adam-dur"), hlEl = null,
         main = wrap.querySelector("#adam-main"), endc = wrap.querySelector("#adam-end"),
-        again = wrap.querySelector("#adam-again"), btnPulse = null;
+        again = wrap.querySelector("#adam-again"), rateSel = wrap.querySelector("#adam-rate"), btnPulse = null;
     var PLAY = '<path d="M8 5v14l11-7z"/>', PAUSE = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
     var DUR = data.duration || 0;
     if (DUR) durT.textContent = fmt(DUR);
     au.addEventListener("loadedmetadata", function(){ if (isFinite(au.duration) && au.duration) { DUR = au.duration; durT.textContent = fmt(DUR); } });
+
+    function setRate(rate, persist) {
+      rate = closestRate(rate);
+      try {
+        au.playbackRate = rate;
+        au.defaultPlaybackRate = rate;
+        au.preservesPitch = true;
+        au.webkitPreservesPitch = true;
+        au.mozPreservesPitch = true;
+      } catch (e) { /* fail-soft */ }
+      if (rateSel) rateSel.value = String(rate);
+      if (persist) persistRate(rate);
+    }
+    setRate(savedRate(), false);
+    if (rateSel) rateSel.addEventListener("change", function(){ setRate(rateSel.value, true); });
 
     function hi(el){ if(el===hlEl)return; if(hlEl)hlEl.style.cssText=SP; if(el)el.style.cssText=SPON; hlEl=el; }
     function paint(t){
