@@ -197,15 +197,16 @@
       "#adam-player #adam-btn{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
       "#adam-player #adam-btn[data-idle-pulse='1'].adam-css-pulse{animation:adamButtonColorPulse 5s infinite;}" +
       "#adam-player #adam-btn[data-idle-pulse='0']{animation:none;background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
-      "#adam-player #adam-rate-wrap{position:relative;display:inline-flex;align-items:center;}" +
-      "#adam-player #adam-rate{height:30px;min-width:82px;border-radius:0;border:1px solid rgba(177,133,66,.72);background:rgba(177,133,66,.14);color:#e6e1d8;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;padding:0 8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;}" +
+      "#adam-player #adam-rate-wrap{position:relative;display:inline-flex;align-items:center;width:70px;min-width:70px;margin-left:auto;}" +
+      "#adam-player #adam-rate{width:70px;height:30px;min-width:70px;border-radius:0;border:1px solid rgba(177,133,66,.72);background:rgba(177,133,66,.14);color:#e6e1d8;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;padding:0 5px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;}" +
+      "#adam-player #adam-rate,#adam-player #adam-rate-menu,#adam-player #adam-rate-menu button{box-sizing:border-box;}" +
       "#adam-player #adam-rate:focus{outline:1px solid " + GOLD + ";outline-offset:1px;}" +
       "#adam-player #adam-rate svg{display:block;flex:0 0 auto;}" +
-      "#adam-player #adam-rate .adam-rate-gauge{width:14px;height:14px;color:" + GOLD + ";}" +
-      "#adam-player #adam-rate .adam-rate-caret{width:12px;height:12px;color:" + GOLD + ";}" +
-      "#adam-player #adam-rate-menu{display:none;position:absolute;right:0;top:calc(100% + 7px);z-index:5;width:98px;border:1px solid rgba(177,133,66,.42);background:#171513;box-shadow:0 14px 26px rgba(0,0,0,.28);padding:4px;gap:2px;}" +
+      "#adam-player #adam-rate .adam-rate-gauge{width:12px;height:12px;color:" + GOLD + ";}" +
+      "#adam-player #adam-rate .adam-rate-caret{width:10px;height:10px;color:" + GOLD + ";}" +
+      "#adam-player #adam-rate-menu{display:none;position:absolute;right:0;top:calc(100% + 7px);z-index:5;width:70px;border:1px solid rgba(177,133,66,.42);background:#171513;box-shadow:0 14px 26px rgba(0,0,0,.28);padding:4px;gap:2px;}" +
       "#adam-player #adam-rate-wrap[data-open='1'] #adam-rate-menu{display:grid;}" +
-      "#adam-player #adam-rate-menu button{height:28px;border:0;border-radius:0;background:transparent;color:#8a8578;text-align:left;padding:0 8px;font-size:12px;font-variant-numeric:tabular-nums;cursor:pointer;}" +
+      "#adam-player #adam-rate-menu button{height:28px;border:0;border-radius:0;background:transparent;color:#8a8578;text-align:left;padding:0 7px;font-size:12px;font-variant-numeric:tabular-nums;cursor:pointer;}" +
       "#adam-player #adam-rate-menu button[aria-checked='true']{background:" + GOLD + ";color:" + INK + ";font-weight:500;}" +
       "@keyframes adamButtonColorPulse{" +
         "0%{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";animation-timing-function:cubic-bezier(.4,0,.2,1);}" +
