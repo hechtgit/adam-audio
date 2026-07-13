@@ -1,8 +1,9 @@
-/* ADAM-PLAYER v8 — audio prehrávač pre blog články hechtberger.com
+/* ADAM-PLAYER v9 — audio prehrávač pre blog články hechtberger.com
  * Hosted na GitHub Pages (hechtgit.github.io/adam-audio); footer na webe ho už len načíta.
  * Manifest + marks + MP3 žijú v tom istom repe — nový článok = git push, žiadny zásah do webu.
  * Fail-soft: ak manifest/článok/telo chýba, NIČ neurobí (web sa nikdy nerozbije).
  *
+ * v9 = v8 + karaoke mapuje aj sekčné nadpisy/súhrny a ignoruje vlastné texty playera.
  * v8 = ručný mount data-adam-audio-slug už nevypína karaoke wrapping textu.
  * v7 = v6 + mobilný layout fix pre úzke obrazovky; desktop dizajn ostáva rovnaký.
  * v6 = v5 (funkčne zhodné: end-card, JSON-LD, seek, highlight) s novým dizajnom:
@@ -130,33 +131,75 @@
   // Normalizuj text na porovnanie: zlúč medzery a odstráň medzeru pred interpunkciou
   // (marks môžu mať artefakt "slovo ." — na stránke je "slovo.").
   function normTxt(s){ return s.replace(/\s+([.,;:!?…])/g, "$1").replace(/\s+/g, " ").trim(); }
+  function compactTxt(s){ return normTxt(s).toLowerCase().replace(/[\s.,;:!?…"'„“”‘’()\[\]{}<>—–\-]+/g, ""); }
+  function isWholeBlock(el){ return /^(H[1-4]|SUMMARY)$/.test((el.tagName || "").toUpperCase()); }
+
+  function collectReadableElements(blocks) {
+    var els = [];
+    blocks.forEach(function (b) {
+      [].slice.call(b.querySelectorAll("h1,h2,h3,h4,p,summary")).forEach(function (el) {
+        if (el.closest("#adam-player")) return;
+        if (els.indexOf(el) < 0) els.push(el);
+      });
+    });
+    return els;
+  }
+
+  function elementHasTarget(el, target, compactTarget) {
+    var txt = normTxt(el.textContent || "");
+    if (!txt) return false;
+    if (isWholeBlock(el)) return compactTxt(txt) === compactTarget;
+    return txt.indexOf(target) >= 0;
+  }
 
   function wrapSentences(blocks, marks) {
-    var ps = [];
-    blocks.forEach(function (b) { [].slice.call(b.querySelectorAll("p")).forEach(function (p) { ps.push(p); }); });
-    var norms = ps.map(function (p) { return normTxt(p.textContent); });
+    var els = collectReadableElements(blocks);
+    var norms = els.map(function (el) { return normTxt(el.textContent || ""); });
     var gi = 0, wrapped = 0;
-    for (var pi = 0; pi < ps.length && gi < marks.length; pi++) {
-      var txt = norms[pi];
+
+    function appearsLater(target, compactTarget, fromIndex) {
+      for (var k = fromIndex + 1; k < els.length; k++) {
+        if (elementHasTarget(els[k], target, compactTarget)) return true;
+      }
+      return false;
+    }
+
+    for (var ei = 0; ei < els.length && gi < marks.length; ei++) {
+      var el = els[ei], txt = norms[ei];
       if (!txt) continue;
+
+      if (isWholeBlock(el)) {
+        while (gi < marks.length) {
+          var blockTarget = normTxt(marks[gi].text || "");
+          var blockCompact = compactTxt(blockTarget);
+          if (!blockTarget) { gi++; continue; }
+          if (compactTxt(txt) === blockCompact) {
+            el.classList.add("adam-h");
+            el.setAttribute("data-i", marks[gi].i);
+            gi++; wrapped++;
+            continue;
+          }
+          if (!appearsLater(blockTarget, blockCompact, ei)) { gi++; continue; }
+          break;
+        }
+        continue;
+      }
+
       var html = "", pos = 0, matchedHere = false;
       while (gi < marks.length) {
-        var target = normTxt(marks[gi].text);
+        var target = normTxt(marks[gi].text || "");
+        var compactTarget = compactTxt(target);
         if (!target) { gi++; continue; }
         var idx = txt.indexOf(target, pos);
         if (idx < 0) {
-          // Ak značka nie je v žiadnom NASLEDUJÚCOM odseku, je to text mimo <p>
-          // (popisok/graf) — preskoč ju, nezasekni zvyšok článku.
-          var later = false;
-          for (var k = pi + 1; k < ps.length; k++) { if (norms[k].indexOf(target) >= 0) { later = true; break; } }
-          if (!later) { gi++; continue; }
+          if (!appearsLater(target, compactTarget, ei)) { gi++; continue; }
           break;
         }
         if (idx > pos) html += esc(txt.slice(pos, idx));
         html += '<span class="adam-s" data-i="' + marks[gi].i + '">' + esc(target) + "</span>";
         pos = idx + target.length; gi++; matchedHere = true; wrapped++;
       }
-      if (matchedHere) { html += esc(txt.slice(pos)); ps[pi].innerHTML = html; }
+      if (matchedHere) { html += esc(txt.slice(pos)); el.innerHTML = html; }
     }
     return wrapped;
   }
@@ -199,6 +242,10 @@
     st.textContent =
       "#adam-player,#adam-player *{box-sizing:border-box;}" +
       "#adam-player #adam-btn{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
+      ".adam-s{transition:background .4s,color .4s;border-radius:0;padding:0 2px;}" +
+      ".adam-s.adam-on{background:rgba(177,133,66,.28);color:#fff;}" +
+      ".adam-h{transition:background .4s,color .4s;}" +
+      ".adam-h.adam-on{background:rgba(177,133,66,.18);color:#fff;}" +
       "#adam-player #adam-btn[data-idle-pulse='1'].adam-css-pulse{animation:adamButtonColorPulse 5s infinite;}" +
       "#adam-player #adam-btn[data-idle-pulse='0']{animation:none;background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
       "#adam-player #adam-rate-wrap{position:relative;display:inline-flex;align-items:center;width:70px;min-width:70px;margin-left:auto;}" +
@@ -387,11 +434,9 @@
     nn.idle();
 
     if (blocks.length) wrapSentences(blocks, data.marks || []);
-    var SP = "transition:background .4s,color .4s;border-radius:0;padding:0 2px;";
-    var SPON = SP + "background:rgba(177,133,66,.28);color:#fff;";
     var spanByI = {};
     blocks.forEach(function (body) {
-      [].slice.call(body.querySelectorAll(".adam-s")).forEach(function(s){ s.style.cssText = SP; spanByI[s.getAttribute("data-i")] = s; });
+      [].slice.call(body.querySelectorAll(".adam-s,.adam-h")).forEach(function(s){ spanByI[s.getAttribute("data-i")] = s; });
     });
 
     var marks = data.marks || [];
@@ -444,7 +489,7 @@
     document.addEventListener("click", function(e){ if (rateWrap && !rateWrap.contains(e.target)) setRateOpen(false); });
     document.addEventListener("keydown", function(e){ if (e.key === "Escape") setRateOpen(false); });
 
-    function hi(el){ if(el===hlEl)return; if(hlEl)hlEl.style.cssText=SP; if(el)el.style.cssText=SPON; hlEl=el; }
+    function hi(el){ if(el===hlEl)return; if(hlEl)hlEl.classList.remove("adam-on"); if(el)el.classList.add("adam-on"); hlEl=el; }
     function paint(t){
       var f = DUR ? Math.min(1, t/DUR) : 0;
       bar.style.width = (f*100) + "%"; thumb.style.left = (f*100) + "%";
