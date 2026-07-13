@@ -257,8 +257,8 @@
     '<path d="M30 8.8 L51.2 51.2 L8.8 51.2 Z" fill="' + INK + '"/>' +
     '<defs><clipPath id="adamC"><path d="M30 8.8 L51.2 51.2 L8.8 51.2 Z"/></clipPath></defs>' +
     '<g clip-path="url(#adamC)"><rect x="4" y="48.6" width="52" height="2.6" fill="' + SCAN + '">' +
-    '<animate id="adam-scan-anim" attributeName="y" values="48.6;8.8;48.6" dur="5s" keyTimes="0;0.5;1" calcMode="spline" ' +
-    'keySplines="0.4 0 0.2 1;0.4 0 0.2 1" begin="indefinite" repeatCount="indefinite"/></rect></g>' +
+    '<animate id="adam-scan-anim" attributeName="y" values="48.6;8.8;48.6" dur="5s" keyTimes="0;0.5;1" calcMode="linear" ' +
+    'begin="indefinite" repeatCount="indefinite"/></rect></g>' +
     '<text x="30.4" y="63" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="600" textLength="46.4" lengthAdjust="spacing" fill="' + INK + '">ADAM</text>';
 
   function build(data, target) {
