@@ -158,6 +158,24 @@
       .replace(/\s+/g, " ").trim();
   }
   function compactTxt(s){ return normTxt(s).toLowerCase().replace(/[\s.,;:!?…"'„“”‘’()\[\]{}<>—–\-]+/g, ""); }
+  function compactMap(s) {
+    var out = "", map = [];
+    for (var i = 0; i < s.length; i++) {
+      var ch = s.charAt(i);
+      if (/[\s.,;:!?…"'„“”‘’()\[\]{}<>—–\-]/.test(ch)) continue;
+      out += ch.toLowerCase(); map.push(i);
+    }
+    return { text: out, map: map };
+  }
+  function findTargetRange(txt, target, pos) {
+    var idx = txt.indexOf(target, pos);
+    if (idx >= 0) return { start: idx, end: idx + target.length };
+    var src = compactMap(txt.slice(pos));
+    var needle = compactMap(target).text;
+    var cidx = needle ? src.text.indexOf(needle) : -1;
+    if (cidx < 0) return null;
+    return { start: pos + src.map[cidx], end: pos + src.map[cidx + needle.length - 1] + 1 };
+  }
   function isWholeBlock(el){ return /^(H[1-4]|SUMMARY)$/.test((el.tagName || "").toUpperCase()); }
 
   function collectReadableElements(blocks) {
@@ -216,14 +234,14 @@
         var target = normTxt(marks[gi].text || "");
         var compactTarget = compactTxt(target);
         if (!target) { gi++; continue; }
-        var idx = txt.indexOf(target, pos);
-        if (idx < 0) {
+        var hit = findTargetRange(txt, target, pos);
+        if (!hit) {
           if (!appearsLater(target, compactTarget, ei)) { gi++; continue; }
           break;
         }
-        if (idx > pos) html += esc(txt.slice(pos, idx));
-        html += '<span class="adam-s" data-i="' + marks[gi].i + '">' + esc(target) + "</span>";
-        pos = idx + target.length; gi++; matchedHere = true; wrapped++;
+        if (hit.start > pos) html += esc(txt.slice(pos, hit.start));
+        html += '<span class="adam-s" data-i="' + marks[gi].i + '">' + esc(txt.slice(hit.start, hit.end)) + "</span>";
+        pos = hit.end; gi++; matchedHere = true; wrapped++;
       }
       if (matchedHere) { html += esc(txt.slice(pos)); el.innerHTML = html; }
     }
