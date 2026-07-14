@@ -1,8 +1,9 @@
-/* ADAM-PLAYER v9 — audio prehrávač pre blog články hechtberger.com
+/* ADAM-PLAYER v10 — audio prehrávač pre blog články hechtberger.com
  * Hosted na GitHub Pages (hechtgit.github.io/adam-audio); footer na webe ho už len načíta.
  * Manifest + marks + MP3 žijú v tom istom repe — nový článok = git push, žiadny zásah do webu.
  * Fail-soft: ak manifest/článok/telo chýba, NIČ neurobí (web sa nikdy nerozbije).
  *
+ * v10 = karaoke nájde aj Squarespace Code Block články (.ph-exit-article/.sqs-code-container).
  * v9 = v8 + karaoke mapuje aj sekčné nadpisy/súhrny a ignoruje vlastné texty playera.
  * v8 = ručný mount data-adam-audio-slug už nevypína karaoke wrapping textu.
  * v7 = v6 + mobilný layout fix pre úzke obrazovky; desktop dizajn ostáva rovnaký.
@@ -100,6 +101,7 @@
 
   function findBlocks() {
     return [].slice.call(document.querySelectorAll(
+      ".ph-exit-article, .BlogItem .sqs-code-container, article .sqs-code-container, main .sqs-code-container, " +
       ".BlogItem .sqs-html-content, article .sqs-html-content, .blog-item-wrapper .sqs-html-content, main .sqs-html-content, .sqs-html-content"
     )).filter(function (b) {
       return !b.closest("footer, .Footer, #footer, header, .Header") && b.querySelectorAll("p").length > 0;
