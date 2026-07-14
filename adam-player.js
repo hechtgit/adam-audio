@@ -1,8 +1,9 @@
-/* ADAM-PLAYER v10 — audio prehrávač pre blog články hechtberger.com
+/* ADAM-PLAYER v11 — audio prehrávač pre blog články hechtberger.com
  * Hosted na GitHub Pages (hechtgit.github.io/adam-audio); footer na webe ho už len načíta.
  * Manifest + marks + MP3 žijú v tom istom repe — nový článok = git push, žiadny zásah do webu.
  * Fail-soft: ak manifest/článok/telo chýba, NIČ neurobí (web sa nikdy nerozbije).
  *
+ * v11 = karaoke toleruje display-block inline štítky bez textovej medzery (napr. "Čo tým netvrdím:").
  * v10 = karaoke nájde aj Squarespace Code Block články (.ph-exit-article/.sqs-code-container).
  * v9 = v8 + karaoke mapuje aj sekčné nadpisy/súhrny a ignoruje vlastné texty playera.
  * v8 = ručný mount data-adam-audio-slug už nevypína karaoke wrapping textu.
@@ -132,7 +133,14 @@
 
   // Normalizuj text na porovnanie: zlúč medzery a odstráň medzeru pred interpunkciou
   // (marks môžu mať artefakt "slovo ." — na stránke je "slovo.").
-  function normTxt(s){ return s.replace(/\s+([.,;:!?…])/g, "$1").replace(/\s+/g, " ").trim(); }
+  // Squarespace Code Block vie pri display:block inline štítku stratiť textovú medzeru
+  // za dvojbodkou, napr. "Čo tým netvrdím:Netvrdím". Vizuálne je tam zalomenie,
+  // preto ho pre karaoke párovanie berieme ako medzeru.
+  function normTxt(s){
+    return s.replace(/\s+([.,;:!?…])/g, "$1")
+      .replace(/([:!?])(?=\S)/g, "$1 ")
+      .replace(/\s+/g, " ").trim();
+  }
   function compactTxt(s){ return normTxt(s).toLowerCase().replace(/[\s.,;:!?…"'„“”‘’()\[\]{}<>—–\-]+/g, ""); }
   function isWholeBlock(el){ return /^(H[1-4]|SUMMARY)$/.test((el.tagName || "").toUpperCase()); }
 
