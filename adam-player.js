@@ -1,8 +1,9 @@
-/* ADAM-PLAYER v11 — audio prehrávač pre blog články hechtberger.com
+/* ADAM-PLAYER v12 — audio prehrávač pre blog články hechtberger.com
  * Hosted na GitHub Pages (hechtgit.github.io/adam-audio); footer na webe ho už len načíta.
  * Manifest + marks + MP3 žijú v tom istom repe — nový článok = git push, žiadny zásah do webu.
  * Fail-soft: ak manifest/článok/telo chýba, NIČ neurobí (web sa nikdy nerozbije).
  *
+ * v12 = výraznejší Adam-gold karaoke highlight + voliteľné sledovanie textu pri prehrávaní.
  * v11 = karaoke toleruje display-block inline štítky bez textovej medzery (napr. "Čo tým netvrdím:").
  * v10 = karaoke nájde aj Squarespace Code Block články (.ph-exit-article/.sqs-code-container).
  * v9 = v8 + karaoke mapuje aj sekčné nadpisy/súhrny a ignoruje vlastné texty playera.
@@ -27,6 +28,8 @@
   var CTA_LEAD = "Viete, akú mesačnú rentu môžete čerpať zo svojho majetku?";
   var RATE_KEY = "adam-audio-rate";
   var RATE_OPTIONS = [1, 1.25, 1.5, 1.75, 2];
+  var FOLLOW_KEY = "adam-audio-follow";
+  var FOLLOW_PAUSE_MS = 15000;
 
   function slug() {
     var m = location.pathname.match(/\/blog\/([^\/?#]+)/);
@@ -129,6 +132,19 @@
   function persistRate(rate) {
     try { localStorage.setItem(RATE_KEY, String(rate)); }
     catch (e) { /* fail-soft */ }
+  }
+  function savedFollow() {
+    try {
+      var v = localStorage.getItem(FOLLOW_KEY);
+      return v === null ? true : v === "1";
+    } catch (e) { return true; }
+  }
+  function persistFollow(enabled) {
+    try { localStorage.setItem(FOLLOW_KEY, enabled ? "1" : "0"); }
+    catch (e) { /* fail-soft */ }
+  }
+  function reducedMotion() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }
 
   // Normalizuj text na porovnanie: zlúč medzery a odstráň medzeru pred interpunkciou
@@ -253,9 +269,9 @@
       "#adam-player,#adam-player *{box-sizing:border-box;}" +
       "#adam-player #adam-btn{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
       ".adam-s{transition:background .4s,color .4s;border-radius:0;padding:0 2px;}" +
-      ".adam-s.adam-on{background:rgba(177,133,66,.28);color:#fff;}" +
-      ".adam-h{transition:background .4s,color .4s;}" +
-      ".adam-h.adam-on{background:rgba(177,133,66,.18);color:#fff;}" +
+      ".adam-s.adam-on{background:" + GOLD + ";color:" + INK + ";box-shadow:0 0 0 2px rgba(177,133,66,.18);}" +
+      ".adam-h{transition:background .4s,color .4s,box-shadow .4s;}" +
+      ".adam-h.adam-on{background:rgba(177,133,66,.32);color:#f0ede8;box-shadow:inset 0 -.18em 0 rgba(177,133,66,.58);}" +
       "#adam-player #adam-btn[data-idle-pulse='1'].adam-css-pulse{animation:adamButtonColorPulse 5s infinite;}" +
       "#adam-player #adam-btn[data-idle-pulse='0']{animation:none;background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
       "#adam-player #adam-rate-wrap{position:relative;display:inline-flex;align-items:center;width:70px;min-width:70px;margin-left:auto;}" +
@@ -269,6 +285,10 @@
       "#adam-player #adam-rate-wrap[data-open='1'] #adam-rate-menu{display:grid;}" +
       "#adam-player #adam-rate-menu button{height:28px;border:0;border-radius:0;background:transparent;color:#8a8578;text-align:left;padding:0 7px;font-size:12px;font-variant-numeric:tabular-nums;cursor:pointer;}" +
       "#adam-player #adam-rate-menu button[aria-checked='true']{background:" + GOLD + ";color:" + INK + ";font-weight:500;}" +
+      "#adam-player #adam-follow{width:34px;height:30px;min-width:34px;border-radius:0;border:1px solid rgba(177,133,66,.72);background:rgba(177,133,66,.14);color:" + GOLD + ";padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;}" +
+      "#adam-player #adam-follow svg{display:block;width:15px;height:15px;}" +
+      "#adam-player #adam-follow[aria-pressed='true']{background:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
+      "#adam-player #adam-follow:focus{outline:1px solid " + GOLD + ";outline-offset:1px;}" +
       "@media (max-width:640px){" +
         "#adam-player{width:100%!important;max-width:100%!important;}" +
         "#adam-player #adam-row{display:block!important;}" +
@@ -281,7 +301,7 @@
         "#adam-player #adam-main>div:first-child p:last-child{font-size:12px!important;line-height:1.35!important;}" +
         "#adam-player #adam-btn{width:58px!important;height:58px!important;min-width:58px!important;}" +
         "#adam-player #adam-ic{width:24px!important;height:24px!important;}" +
-        "#adam-player #adam-main>div:nth-child(2){display:grid!important;grid-template-columns:34px minmax(0,1fr) 34px 70px!important;gap:8px!important;align-items:center!important;flex-wrap:nowrap!important;}" +
+        "#adam-player #adam-main>div:nth-child(2){display:grid!important;grid-template-columns:34px minmax(0,1fr) 34px 70px 34px!important;gap:8px!important;align-items:center!important;flex-wrap:nowrap!important;}" +
         "#adam-player #adam-track{min-width:0!important;}" +
         "#adam-player #adam-cur,#adam-player #adam-dur{min-width:0!important;}" +
         "#adam-player #adam-rate-wrap{margin-left:0!important;}" +
@@ -294,8 +314,9 @@
         "#adam-player #adam-main>div:first-child{grid-template-columns:minmax(0,1fr) 52px!important;gap:10px!important;}" +
         "#adam-player #adam-main>div:first-child p:first-child{font-size:16px!important;}" +
         "#adam-player #adam-btn{width:52px!important;height:52px!important;min-width:52px!important;}" +
-        "#adam-player #adam-main>div:nth-child(2){grid-template-columns:32px minmax(0,1fr) 32px 64px!important;gap:6px!important;}" +
+        "#adam-player #adam-main>div:nth-child(2){grid-template-columns:32px minmax(0,1fr) 32px 64px 32px!important;gap:6px!important;}" +
         "#adam-player #adam-rate-wrap,#adam-player #adam-rate,#adam-player #adam-rate-menu{width:64px!important;min-width:64px!important;}" +
+        "#adam-player #adam-follow{width:32px!important;min-width:32px!important;}" +
         "#adam-player #adam-rate{font-size:11px!important;padding:0 4px!important;gap:3px!important;}" +
         "#adam-player #adam-rate .adam-rate-gauge{display:none!important;}" +
       "}" +
@@ -375,6 +396,12 @@
                   '<button type="button" role="menuitemradio" data-rate="2" aria-checked="false">2x</button>' +
                 '</div>' +
               '</div>' +
+              '<button id="adam-follow" type="button" aria-label="Sledovať text" aria-pressed="true" title="Sledovať text">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                  '<path d="M12 5v3"/><path d="M12 16v3"/><path d="M5 12h3"/><path d="M16 12h3"/>' +
+                  '<circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>' +
+                '</svg>' +
+              '</button>' +
             '</div>' +
           '</div>' +
           '<div id="adam-end" style="display:none;position:relative;z-index:1;padding:18px 20px">' +
@@ -457,9 +484,11 @@
         again = wrap.querySelector("#adam-again"), rateWrap = wrap.querySelector("#adam-rate-wrap"),
         rateBtn = wrap.querySelector("#adam-rate"), rateLabel = wrap.querySelector("#adam-rate-label"),
         rateMenu = wrap.querySelector("#adam-rate-menu"), rateButtons = rateMenu ? [].slice.call(rateMenu.querySelectorAll("[data-rate]")) : [],
+        followBtn = wrap.querySelector("#adam-follow"),
         btnPulse = null;
     var PLAY = '<path d="M8 5v14l11-7z"/>', PAUSE = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
     var DUR = data.duration || 0;
+    var followEnabled = savedFollow(), followSuspendedUntil = 0;
     if (DUR) durT.textContent = fmt(DUR);
     au.addEventListener("loadedmetadata", function(){ if (isFinite(au.duration) && au.duration) { DUR = au.duration; durT.textContent = fmt(DUR); } });
 
@@ -499,7 +528,43 @@
     document.addEventListener("click", function(e){ if (rateWrap && !rateWrap.contains(e.target)) setRateOpen(false); });
     document.addEventListener("keydown", function(e){ if (e.key === "Escape") setRateOpen(false); });
 
-    function hi(el){ if(el===hlEl)return; if(hlEl)hlEl.classList.remove("adam-on"); if(el)el.classList.add("adam-on"); hlEl=el; }
+    function setFollow(enabled, persist) {
+      followEnabled = !!enabled;
+      if (followBtn) {
+        followBtn.setAttribute("aria-pressed", followEnabled ? "true" : "false");
+        followBtn.setAttribute("title", followEnabled ? "Sledovať text zapnuté" : "Sledovať text vypnuté");
+      }
+      if (persist) persistFollow(followEnabled);
+    }
+    function suspendFollow() {
+      if (followEnabled) followSuspendedUntil = Date.now() + FOLLOW_PAUSE_MS;
+    }
+    function followActive(el) {
+      if (!el || !followEnabled || au.paused) return;
+      if (Date.now() < followSuspendedUntil) return;
+      var rect = el.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+      if (!vh) return;
+      var topBand = Math.max(112, vh * 0.24);
+      var bottomBand = vh * 0.72;
+      if (rect.top >= topBand && rect.bottom <= bottomBand) return;
+      var y = rect.top + window.pageYOffset - Math.max(96, vh * 0.40);
+      try { window.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? "auto" : "smooth" }); }
+      catch (e) { window.scrollTo(0, Math.max(0, y)); }
+    }
+    setFollow(followEnabled, false);
+    if (followBtn) followBtn.addEventListener("click", function(){
+      setFollow(!followEnabled, true);
+      followSuspendedUntil = 0;
+      if (followEnabled && hlEl) followActive(hlEl);
+    });
+    window.addEventListener("wheel", suspendFollow, { passive: true });
+    window.addEventListener("touchstart", suspendFollow, { passive: true });
+    document.addEventListener("keydown", function(e){
+      if (["ArrowDown","ArrowUp","PageDown","PageUp","Home","End"," "].indexOf(e.key) >= 0) suspendFollow();
+    });
+
+    function hi(el){ if(el===hlEl)return; if(hlEl)hlEl.classList.remove("adam-on"); if(el) { el.classList.add("adam-on"); followActive(el); } hlEl=el; }
     function paint(t){
       var f = DUR ? Math.min(1, t/DUR) : 0;
       bar.style.width = (f*100) + "%"; thumb.style.left = (f*100) + "%";
@@ -541,7 +606,7 @@
     startIdlePulse();
 
     // Sieť naviazaná priamo na audio stav (spoľahlivejšie než klik na tlačidlo).
-    au.addEventListener("play", function(){ lockBtn(); nn.start(); });
+    au.addEventListener("play", function(){ lockBtn(); nn.start(); if (hlEl) followActive(hlEl); });
     au.addEventListener("pause", function(){ nn.stop(); });
 
     // End-card po dohraní: stabilná výška (žiadny skok layoutu), CTA + replay.
