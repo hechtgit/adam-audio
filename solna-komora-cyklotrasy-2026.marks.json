@@ -14,189 +14,219 @@
     },
     {
       "i": 2,
-      "text": "Tak sa pohodlne usaďte — zatiaľ ešte bez prilby — a v skratke vám ich predstavím.",
+      "text": "Priali ste si k nim doplniť aj tipy na zastávky na kávu a jedlo, takže som návrh rozšíril aj o praktický plán prestávok.",
       "start": 9.7,
-      "end": 14.925
+      "end": 17.45
     },
     {
       "i": 3,
-      "text": "Trasa číslo jeden, Attergau a Irrsee, má približne 60,8 kilometra a 595 metrov stúpania.",
-      "start": 14.925,
-      "end": 23.362
+      "text": "Logika je jednoduchá.",
+      "start": 17.45,
+      "end": 19.687
     },
     {
       "i": 4,
-      "text": "Začína priamo pri ubytovaní v Lohen a vedie najmä pokojnejším vnútrozemím cez dediny a otvorenú krajinu.",
-      "start": 23.362,
-      "end": 30.287
+      "text": "Kávu som hľadal približne po 20 až 25 kilometroch a obed po 40 až 45 kilometroch.",
+      "start": 19.687,
+      "end": 26.337
     },
     {
       "i": 5,
-      "text": "Je to rozumná voľba, ak chcete jazdiť od domu, vyhnúť sa najrušnejším pobrežným cestám a pritom sa dostať k Irrsee.",
-      "start": 30.287,
-      "end": 37.437
+      "text": "Vyberal som podľa reálnych hodnotení na Tripadvisore, otváracích hodín počas vášho pobytu a podľa toho, či má podnik terasu alebo vhodné miesto pre bicykle.",
+      "start": 26.337,
+      "end": 36.187
     },
     {
       "i": 6,
-      "text": "Trasa číslo dva, Attergau a Mondsee, má približne 65,2 kilometra a 841 metrov stúpania.",
-      "start": 37.437,
-      "end": 45.925
+      "text": "Pri každej zastávke sú dve možnosti, aby ste mali aj zálohu.",
+      "start": 36.187,
+      "end": 40.412
     },
     {
       "i": 7,
-      "text": "Aj táto vyráža priamo z Lohen, ale je dlhšia a kopcovitejšia.",
-      "start": 45.925,
-      "end": 50.425
+      "text": "Ak kvalitný a otvorený podnik neleží presne v plánovanom kilometri, na stránke to uvádzam otvorene.",
+      "start": 40.412,
+      "end": 46.962
     },
     {
       "i": 8,
-      "text": "Odmenou je Mondsee a pestrý návrat cez predhorie.",
-      "start": 50.425,
-      "end": 54.087
+      "text": "Trasa číslo jeden, Attergau a Irrsee, má približne 60,8 kilometra a 595 metrov stúpania.",
+      "start": 46.962,
+      "end": 55.4
     },
     {
       "i": 9,
-      "text": "Z trojice je to najnáročnejší variant.",
-      "start": 54.087,
-      "end": 57.162
+      "text": "Začína priamo pri ubytovaní v Lohen a vedie najmä pokojnejším vnútrozemím cez dediny a otvorenú krajinu.",
+      "start": 55.4,
+      "end": 62.325
     },
     {
       "i": 10,
-      "text": "Ja sa pri 841 metroch stúpania síce nezadýcham, ale batérie na bicykloch môžu mať iný názor.",
-      "start": 57.162,
-      "end": 64.425
+      "text": "Je to rozumná voľba, ak chcete jazdiť od domu, vyhnúť sa najrušnejším pobrežným cestám a pritom sa dostať k Irrsee.",
+      "start": 62.325,
+      "end": 69.475
     },
     {
       "i": 11,
-      "text": "Trasa číslo tri je asfaltová osmička Mondsee plus Irrsee.",
-      "start": 64.425,
-      "end": 68.725
+      "text": "Trasa číslo dva, Attergau a Mondsee, má približne 65,2 kilometra a 841 metrov stúpania.",
+      "start": 69.475,
+      "end": 77.962
     },
     {
       "i": 12,
-      "text": "Má približne 56,9 kilometra a 375 metrov stúpania.",
-      "start": 68.725,
-      "end": 75.15
+      "text": "Aj táto vyráža priamo z Lohen, ale je dlhšia a kopcovitejšia.",
+      "start": 77.962,
+      "end": 82.462
     },
     {
       "i": 13,
-      "text": "Na jej štart sa treba presunúť autom do Mondsee.",
-      "start": 75.15,
-      "end": 78.562
+      "text": "Odmenou je Mondsee a pestrý návrat cez predhorie.",
+      "start": 82.462,
+      "end": 86.125
     },
     {
       "i": 14,
-      "text": "Najprv obíde Irrsee, vráti sa do Mondsee a potom pokračuje druhým okruhom popri Mondsee.",
-      "start": 78.562,
-      "end": 84.45
+      "text": "Z trojice je to najnáročnejší variant, preto sa oplatí vyraziť skôr a rozumne pracovať s batériou.",
+      "start": 86.125,
+      "end": 92.462
     },
     {
       "i": 15,
-      "text": "Je najviac jazerná a zároveň najľahšia podľa prevýšenia.",
-      "start": 84.45,
-      "end": 88.637
+      "text": "Trasa číslo tri je asfaltová osmička Mondsee plus Irrsee.",
+      "start": 92.462,
+      "end": 96.762
     },
     {
       "i": 16,
-      "text": "Stále však nejde o trasu úplne oddelenú od áut.",
-      "start": 88.637,
-      "end": 92.45
+      "text": "Má približne 56,9 kilometra a 375 metrov stúpania.",
+      "start": 96.762,
+      "end": 103.187
     },
     {
       "i": 17,
-      "text": "Najmä na východnom brehu Mondsee treba rátať s krátkym úsekom v bežnej premávke.",
-      "start": 92.45,
-      "end": 97.737
+      "text": "Na jej štart sa treba presunúť autom do Mondsee.",
+      "start": 103.187,
+      "end": 106.6
     },
     {
       "i": 18,
-      "text": "Možno sa pýtate, prečo medzi návrhmi nie je okruh okolo najväčšieho jazera Attersee.",
-      "start": 97.737,
-      "end": 103.337
+      "text": "Najprv obíde Irrsee, vráti sa do Mondsee a potom pokračuje druhým okruhom popri Mondsee.",
+      "start": 106.6,
+      "end": 112.487
     },
     {
       "i": 19,
-      "text": "Samotný pobrežný okruh má približne 48 kilometrov a z ubytovania by celá trasa vyšla približne na 62 kilometrov.",
-      "start": 103.337,
-      "end": 111.625
+      "text": "Je najviac jazerná a zároveň najľahšia podľa prevýšenia.",
+      "start": 112.487,
+      "end": 116.675
     },
     {
       "i": 20,
-      "text": "Dĺžkou by teda sedel výborne.",
-      "start": 111.625,
-      "end": 114.3
+      "text": "Stále však nejde o trasu úplne oddelenú od áut.",
+      "start": 116.675,
+      "end": 120.487
     },
     {
       "i": 21,
-      "text": "Problém je inde: približne 85 až 90 percent celej trasy by bolo na cestách spoločných s autami.",
-      "start": 114.3,
-      "end": 121.462
+      "text": "Najmä na východnom brehu Mondsee treba rátať s krátkym úsekom v bežnej premávke.",
+      "start": 120.487,
+      "end": 125.775
     },
     {
       "i": 22,
-      "text": "Asi 48 kilometrov vedie po hlavných pobrežných cestách B 151 a B 152.",
-      "start": 121.462,
-      "end": 128.025
+      "text": "Možno sa pýtate, prečo medzi návrhmi nie je okruh okolo najväčšieho jazera Attersee.",
+      "start": 125.775,
+      "end": 131.375
     },
     {
       "i": 23,
-      "text": "Je to krásny cestný okruh, ale nezodpovedá zadaniu hľadať pokojnejšie trasy s minimom premávky.",
-      "start": 128.025,
-      "end": 134.237
+      "text": "Samotný pobrežný okruh má približne 48 kilometrov a z ubytovania by celá trasa vyšla približne na 62 kilometrov.",
+      "start": 131.375,
+      "end": 139.662
     },
     {
       "i": 24,
-      "text": "Preto som ho do hlavnej trojice nezaradil.",
-      "start": 134.237,
-      "end": 137.137
+      "text": "Dĺžkou by teda sedel výborne.",
+      "start": 139.662,
+      "end": 142.337
     },
     {
       "i": 25,
-      "text": "Trasy nemajú povinne pridelené dni, no podľa otváracích hodín dáva najväčší zmysel ísť v piatok trasu číslo tri a v sobotu jednotku alebo dvojku.",
-      "start": 137.137,
-      "end": 146.562
+      "text": "Problém je inde: približne 85 až 90 percent celej trasy by bolo na cestách spoločných s autami.",
+      "start": 142.337,
+      "end": 149.5
     },
     {
       "i": 26,
-      "text": "Ak chcete vyraziť rovno od ubytovania, siahnite po jednotke alebo dvojke.",
-      "start": 146.562,
-      "end": 151.412
+      "text": "Asi 48 kilometrov vedie po hlavných pobrežných cestách B 151 a B 152.",
+      "start": 149.5,
+      "end": 156.062
     },
     {
       "i": 27,
-      "text": "Ak chcete dve jazerá, viac pobrežia a miernejší profil, najlepšie sedí trojka.",
-      "start": 151.412,
-      "end": 156.837
+      "text": "Je to krásny cestný okruh, ale nezodpovedá zadaniu hľadať pokojnejšie trasy s minimom premávky.",
+      "start": 156.062,
+      "end": 162.275
     },
     {
       "i": 28,
-      "text": "Pri každej trase nájdete na stránke mapu, výškový profil aj súbor GPX na stiahnutie.",
-      "start": 156.837,
-      "end": 163.025
+      "text": "Preto som ho do hlavnej trojice nezaradil.",
+      "start": 162.275,
+      "end": 165.175
     },
     {
       "i": 29,
-      "text": "Na stránke som ku každej trase doplnil aj dve overené možnosti na kávu a dve na obed — s hodnoteniami z Tripadvisoru, informáciou o terase, otváracími hodinami a upozornením, keď je podnik o pár kilometrov skôr.",
-      "start": 163.025,
-      "end": 176.712
+      "text": "Trasy nemajú povinne pridelené dni, no podľa otváracích hodín dáva najväčší zmysel ísť v piatok trasu číslo tri a v sobotu jednotku alebo dvojku.",
+      "start": 165.175,
+      "end": 174.6
     },
     {
       "i": 30,
-      "text": "Všetky zastávky nájdete aj priamo v GPX, takže vás káva nebude musieť hľadať po Rakúsku sama.",
-      "start": 176.712,
-      "end": 183.187
+      "text": "Ak chcete vyraziť rovno od ubytovania, siahnite po jednotke alebo dvojke.",
+      "start": 174.6,
+      "end": 179.45
     },
     {
       "i": 31,
-      "text": "Prajem vám dobré počasie, plné batérie a presne toľko koláča, koľko si kilometre zaslúžia.",
-      "start": 183.187,
-      "end": 189.437
+      "text": "Ak chcete dve jazerá, viac pobrežia a miernejší profil, najlepšie sedí trojka.",
+      "start": 179.45,
+      "end": 184.875
     },
     {
       "i": 32,
+      "text": "Pri každej trase nájdete na stránke mapu, výškový profil aj súbor GPX na stiahnutie.",
+      "start": 184.875,
+      "end": 191.062
+    },
+    {
+      "i": 33,
+      "text": "Všetky zastávky sú zakreslené priamo v mapách jednotlivých trás.",
+      "start": 191.062,
+      "end": 195.637
+    },
+    {
+      "i": 34,
+      "text": "Kliknutím na symbol kávy alebo jedla si otvoríte názov podniku, kilometer trasy, hodnotenie a odkaz na detail.",
+      "start": 195.637,
+      "end": 202.987
+    },
+    {
+      "i": 35,
+      "text": "Rovnaké body som pridal aj do GPX súborov, takže sa po stiahnutí zobrazia spolu s trasou v navigácii.",
+      "start": 202.987,
+      "end": 209.925
+    },
+    {
+      "i": 36,
+      "text": "Prajem vám dobré počasie, bezpečnú jazdu a príjemné prestávky.",
+      "start": 209.925,
+      "end": 214.512
+    },
+    {
+      "i": 37,
       "text": "Šťastnú cestu!",
-      "start": 189.437,
-      "end": 191.212
+      "start": 214.512,
+      "end": 216.287
     }
   ]
 }
