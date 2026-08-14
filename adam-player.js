@@ -68,6 +68,11 @@
 
   function retryRentIntroPlacement(pageMount, tries) {
     if (!pageMount) return;
+    var approvedMount = explicitMount();
+    if (approvedMount) {
+      if (pageMount.parentNode !== approvedMount) approvedMount.appendChild(pageMount);
+      return;
+    }
     var anchor = rentIntroAnchor();
     if (anchor && anchor.parentNode) {
       anchor.parentNode.insertBefore(pageMount, anchor.nextSibling);
@@ -96,7 +101,7 @@
         if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(pageMount, anchor.nextSibling);
         else calc.parentNode.insertBefore(pageMount, calc);
         retryRentIntroPlacement(pageMount, 20);
-        return { slug: "strategia-privatnej-renty", mount: pageMount, wrapText: false, introSuffix: "vám stručne predstaví aplikáciu." };
+        return { slug: "strategia-privatnej-renty", mount: pageMount, wrapText: false, introSuffix: "vám stručne vysvetlí, ako aplikácia funguje." };
       }
     }
     var s = slug();
