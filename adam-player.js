@@ -365,6 +365,12 @@
     ensurePlayerStyles();
 
     var introSuffix = target.introSuffix || "vám článok prečíta.";
+    /* Na stránke renty staršia Squarespace vložka sledovala presný reťazec
+       "Nechce sa vám čítať" a po každej vlastnej zmene ho prepisovala znova.
+       Nedeliteľná medzera je vizuálne rovnaká, ale zabráni tejto rekurzii. */
+    var introLead = target.slug === "strategia-privatnej-renty"
+      ? "Nechce\u00a0sa vám čítať?"
+      : "Nechce sa vám čítať?";
     var wrap = document.createElement("div");
     wrap.id = "adam-player";
     wrap.setAttribute("style",
@@ -381,7 +387,7 @@
           '<div id="adam-main" style="position:relative;z-index:1;padding:18px 20px">' +
             '<div style="display:flex;align-items:center;gap:16px">' +
               '<div style="flex:1;min-width:0">' +
-                '<p style="margin:0 0 6px;font-size:18px;line-height:1.3;color:#f0ede8">Nechce sa vám čítať?<br>' +
+                '<p style="margin:0 0 6px;font-size:18px;line-height:1.3;color:#f0ede8">' + introLead + '<br>' +
                   '<b style="color:' + GOLD + ';font-weight:500">Adam</b> ' + introSuffix + '</p>' +
                 '<p style="margin:0;font-size:13px;color:#8a8578">AI asistent Petra Hechtbergera</p>' +
               '</div>' +
