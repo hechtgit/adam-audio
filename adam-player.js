@@ -40,6 +40,20 @@
     return document.querySelector("[data-adam-audio-slug]");
   }
 
+  /* Starší globálny Squarespace skript na tejto jednej stránke opakovane
+     prepisuje text konzultačných odkazov a vlastnou zmenou znovu spúšťa svoj
+     MutationObserver. Odstránime iba jeho selektorové triedy; vzhľad, cieľ aj
+     funkcia odkazov zostanú zachované. Opakovanie pokryje neskôr vloženú pätu. */
+  function neutralizeRentLegacyButtonLoop() {
+    if (location.pathname.replace(/\/+$/, "") !== "/strategia-privatnej-renty") return;
+    var classes = ["sqs-block-button-element", "ph-footer-btn", "wm-btn", "ph-kt-mapbtn"];
+    Array.prototype.forEach.call(document.querySelectorAll(
+      "a.sqs-block-button-element, a.ph-footer-btn, a.wm-btn, a.ph-kt-mapbtn"
+    ), function (link) {
+      classes.forEach(function (name) { link.classList.remove(name); });
+    });
+  }
+
   function rentIntroAnchor() {
     var nodes = [].slice.call(document.querySelectorAll(
       "main h1, main h2, main h3, main h4, main p, .sqs-html-content h1, .sqs-html-content h2, .sqs-html-content h3, .sqs-html-content h4, .sqs-html-content p"
@@ -87,7 +101,15 @@
     if (mount) {
       var forced = mount.getAttribute("data-adam-audio-slug");
       var noWrap = mount.getAttribute("data-adam-audio-wrap") === "false";
-      if (forced) return { slug: forced, mount: mount, wrapText: !noWrap };
+      if (forced) {
+        if (forced === "strategia-privatnej-renty") {
+          neutralizeRentLegacyButtonLoop();
+          [0, 250, 1000, 2500].forEach(function (delay) {
+            setTimeout(neutralizeRentLegacyButtonLoop, delay);
+          });
+        }
+        return { slug: forced, mount: mount, wrapText: !noWrap };
+      }
     }
     if (location.pathname.replace(/\/+$/, "") === "/strategia-privatnej-renty") {
       var calc = document.getElementById("ph-renta-calculator");
