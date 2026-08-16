@@ -51,7 +51,13 @@
   "mp3": "strategia-privatnej-renty.mp3",
   "marks": "strategia-privatnej-renty.marks.json",
   "title": "Stratégia privátnej renty",
-  "duration": 202.176
+  "duration": 187.68
+ },
+ "strategia-privatnej-renty-mobile": {
+  "mp3": "strategia-privatnej-renty-mobile.mp3",
+  "marks": "strategia-privatnej-renty-mobile.marks.json",
+  "title": "Stratégia privátnej renty — mobilná verzia",
+  "duration": 197.592
  },
  "majetok-po-exite-6-chyb": {
   "mp3": "majetok-po-exite-6-chyb.mp3",
