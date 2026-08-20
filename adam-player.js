@@ -447,12 +447,23 @@
                   '<button type="button" role="menuitemradio" data-rate="2" aria-checked="false">2x</button>' +
                 '</div>' +
               '</div>' +
-              '<button id="adam-follow" type="button" aria-label="Sledovať text" aria-pressed="true" title="Sledovať text">' +
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-                  '<path d="M12 5v3"/><path d="M12 16v3"/><path d="M5 12h3"/><path d="M16 12h3"/>' +
-                  '<circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>' +
-                '</svg>' +
-              '</button>' +
+              /* „Sledovať text" má zmysel len tam, kde Adam číta text zo stránky:
+                 posúva ju tak, aby práve čítaná veta zostala na obrazovke. Na
+                 stránke o rente je výklad samostatný, žiadny text sa nezvýrazňuje
+                 (`wrapText:false`, prázdne značky) — tlačidlo tam prepínalo stav,
+                 ktorý nemal na čo pôsobiť, a klientovi ponúkalo mŕtvy ovládač.
+
+                 Podmienka je bezpečná pre blog: o pár riadkov vyššie sa prehrávač
+                 bez blokov vôbec nepostaví (`if (!blocks.length && !target.mount)
+                 return;`), takže všade, kde na blogu prehrávač je, sú bloky tiež. */
+              (blocks.length
+                ? '<button id="adam-follow" type="button" aria-label="Sledovať text" aria-pressed="true" title="Sledovať text">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                      '<path d="M12 5v3"/><path d="M12 16v3"/><path d="M5 12h3"/><path d="M16 12h3"/>' +
+                      '<circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>' +
+                    '</svg>' +
+                  '</button>'
+                : '') +
             '</div>' +
           '</div>' +
           '<div id="adam-end" style="display:none;position:relative;z-index:1;padding:18px 20px">' +
