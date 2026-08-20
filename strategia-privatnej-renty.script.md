@@ -1,17 +1,21 @@
-Dobrý deň. Som Adam, digitálny asistent Petra Hechtbergera. Túto aplikáciu pripravil Petr. Vytvoril jej metodiku aj koncept Čiary života. Ja vám iba vysvetlím, ako aplikácia funguje.
+Dobrý deň. Som Adam, digitálny asistent Petra Hechtbergera.
 
-Aplikácia vám pomôže pozrieť sa na privátnu rentu nielen cez čísla, ale najmä v kontexte vášho života. Jej základom je Čiara života a tri pohyblivé míľniky. Prvý predstavuje dnešok. Druhý označuje vek, od ktorého chcete začať čerpať privátnu rentu. Tretí určuje, dokedy má renta pokračovať. Keď ktorýkoľvek míľnik posuniete, aplikácia celý plán okamžite prepočíta.
+Za pár minút si vytvoríte konkrétny plán privátnej renty — pravidelného príjmu z vlastného majetku — podľa vlastných predpokladov. Uvidíte, aký majetok si zvolená renta môže vyžadovať alebo akú rentu môže váš majetok podporiť a ako dlho.
 
-Prvý krok je jednoduchá modelácia podľa vašich vlastných predstáv. V karte Dnes si zvolíte, či majetok ešte len budujete, alebo ho už máte. Ak ho budujete, môžete pracovať s jednorazovou investíciou, pravidelným investovaním alebo ich kombináciou. Aplikácia ukáže, aký majetok si na požadovanú rentu potrebujete pripraviť. Ak už majetok máte, ukáže, akú mesačnú rentu môže prinášať alebo ako dlho by pri zvolenom čerpaní mohol vydržať.
+Petr aplikáciu vytvoril z metodiky, ktorú používa pri plánovaní privátnej renty so svojimi klientmi. Jej základom je Čiara života. Spája dnešok, začiatok čerpania a plánovaný koniec renty, takže pri zmene ktoréhokoľvek míľnika okamžite vidíte vplyv na celý plán.
 
-V ďalších míľnikoch nastavíte začiatok výplaty, mesačnú rentu v dnešnej hodnote a koniec čerpania. Môžete zvoliť aj rentu bez časového obmedzenia. Zhodnotenie si určujete sami, zvlášť pre obdobie budovania majetku a zvlášť pre obdobie vyplácania, a aplikácia vám neodporúča konkrétne portfólio. S infláciou štandardne počítame, aby bola renta vyjadrená v dnešnej hodnote peňazí. Jej výšku si môžete zmeniť alebo ju celkom vypnúť.
+Začnite krátkym sprievodcom. Nie je to iba ukážka ovládania: v každom kroku si rovno zvolíte konkrétnu hodnotu a po dokončení je váš plán nastavený. Ak niektorú hodnotu nechcete meniť, stačí ponechať tú predvolenú.
 
-Na tento základný prepočet nezadávate meno ani e-mail. Pracujete iba s údajmi potrebnými na prepočet vášho plánu. Výsledok je orientačný rámec, nie investičné odporúčanie ani garancia budúceho výnosu.
+Ak majetok budujete, modelácia ukáže, akú kombináciu počiatočného kapitálu a pravidelného investovania si cieľ môže vyžadovať. Ak ho už máte, preveríte, akú rentu môže pri zvolených predpokladoch podporiť a na aký čas. Začiatok a dĺžku čerpania, rentu, infláciu aj zhodnotenie si určujete sami. Základný plán vytvoríte bez mena a e-mailu.
 
-Hneď po prvej zmene sa pod aplikáciou objaví test odolnosti plánu. Uvidíte v ňom, v koľkých z osemsto modelovaných priebehov by váš majetok pokryl všetky plánované výplaty renty. Počas budovania majetku sa v nich skladajú súvislé úseky skutočných ročných výnosov indexu MSCI World, ktorý zastupuje najväčšie svetové spoločnosti. Počas vyplácania sa počíta s pevným modelovým výnosom štyri percentá ročne po investičných nákladoch, pred infláciou, bez ohľadu na to, čo si nastavíte vy. Nie je to pravdepodobnosť, predpoveď ani garancia.
+Na ten istý plán sa potom môžete pozrieť z troch strán.
 
-Po zadaní mena a mailovej adresy si celý výpočet môžete nechať poslať a stiahnuť ako PDF. Modelácia ten istý test rozpíše do detailu a navyše ukáže, o koľko vyššia investícia by výsledok posunula do vyššieho počtu úspešných priebehov.
+Prvým je váš vlastný plán — výsledok čísel a predpokladov, ktoré ste si zvolili. Aplikácia nevyberá portfólio a výsledok nie je investičným odporúčaním ani garanciou výnosu.
 
-Ak budete chcieť ísť ešte ďalej, Petr môže na osobnej konzultácii k vašej modelácii pridať aj modelový pohľad do budúcnosti. Vychádza z aktuálnych dlhodobých očakávaní popredných svetových investičných inštitúcií. Ak budete mať záujem, môže zároveň urobiť audit portfólia, zasadiť investície do kontextu vášho celkového majetku a navrhnúť stratégiu na mieru.
+Druhým je test odolnosti. V osemsto modelovaných priebehoch ukáže, koľkokrát majetok pokryl všetky plánované výplaty. Pri budovaní používa súvislé úseky historických výnosov indexu MSCI World, pri čerpaní jednotný modelový výnos štyri percentá ročne po nákladoch a pred infláciou. Nejde o pravdepodobnosť ani predpoveď.
 
-Ak vás zaujíma, ako by tento pohľad zmenil váš plán, pripravte si najskôr vlastnú modeláciu. Potom si ju môžete nechať poslať na zadanú adresu alebo si rezervovať osobnú konzultáciu.
+Podrobnejšiu modeláciu si môžete poslať a stiahnuť ako PDF. Uvidíte v nej aj to, aký kapitál by zodpovedal vyššej odolnosti. Meno a e-mail zadáte až v tomto kroku.
+
+Tretím pohľadom môže byť osobná odborná interpretácia. Na konzultácii s Petrom spoločne preveríte predpoklady modelácie v kontexte vašich investícií, podnikania, likvidity a ďalších cieľov. Petr môže doplniť aj pohľad založený na dlhodobých očakávaniach významných investičných inštitúcií.
+
+Vašu finančnú budúcnosť jeden výpočet nerozhodne. Môže však premeniť neurčitú predstavu na plán, s ktorým sa dá pracovať. Spustite sprievodcu a zadajte svoje čísla. O pár minút uvidíte, čo si zvolená renta môže vyžadovať a čo má zmysel preveriť ďalej.
