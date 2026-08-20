@@ -2,7 +2,7 @@ Dobrý deň. Som Adam, digitálny asistent Petra Hechtbergera. Už za pár minú
 
 Petr postavil aplikáciu aj jej metodiku podľa konceptu privátnej renty, ako ju nastavuje svojim klientom, ktorým dnes spravuje majetok v objeme vyše dvadsať miliónov eur. Základom je Čiara života s tromi míľnikmi: dnešok, začiatok čerpania renty a jej plánovaný koniec. Keď ktorýkoľvek z nich zmeníte, celý plán sa okamžite prepočíta.
 
-Krátky sprievodca vás hneď na začiatku prevedie celým nastavením. Nie je to iba ukážka ovládania: v každom z desiatich krokov si rovno zvolíte konkrétnu hodnotu a po poslednom kroku máte vlastný plán hotový. Ak niektorú hodnotu nechcete meniť, stačí potvrdiť tú predvolenú a pokračovať.
+Ak chcete, celým nastavením vás prevedie krátky sprievodca. Spustíte si ho vpravo hore v aplikácii pod tlačidlom Sprievodca, a to kedykoľvek — aj opakovane, keď sa k niečomu budete chcieť vrátiť. Nie je to iba ukážka ovládania: v každom z desiatich krokov si rovno zvolíte konkrétnu hodnotu a po poslednom kroku máte vlastný plán hotový. Ak niektorú hodnotu nechcete meniť, stačí potvrdiť tú predvolenú a pokračovať.
 
 V stručnosti vám poviem, čo vás čaká. Ak majetok ešte budujete, môžete zadať jednorazovú investíciu, pravidelné investovanie alebo ich kombináciu. Aplikácia ukáže, aký majetok by ste si na zvolenú rentu potrebovali pripraviť. Ak už majetok máte, uvidíte, akú rentu by mohol prinášať alebo ako dlho by mohol vydržať.
 
