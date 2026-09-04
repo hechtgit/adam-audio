@@ -51,7 +51,7 @@
   "mp3": "strategia-privatnej-renty.mp3",
   "marks": "strategia-privatnej-renty.marks.json",
   "title": "Stratégia privátnej renty",
-  "duration": 220.776000
+  "duration": 220.776
  },
  "strategia-privatnej-renty-mobile": {
   "mp3": "strategia-privatnej-renty-mobile.mp3",
@@ -88,5 +88,11 @@
   "marks": "solna-komora-cyklotrasy-2026.marks.json",
   "title": "Tri cyklistické okruhy pri rakúskych jazerách",
   "duration": 216.336
+ },
+ "aky-kapital-potrebujete-na-privatnu-rentu": {
+  "mp3": "aky-kapital-potrebujete-na-privatnu-rentu.mp3",
+  "marks": "aky-kapital-potrebujete-na-privatnu-rentu.marks.json",
+  "title": "Aký kapitál potrebujete na privátnu rentu",
+  "duration": 522.948
  }
 }
