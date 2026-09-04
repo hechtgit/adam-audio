@@ -1,8 +1,9 @@
-/* ADAM-PLAYER v12 — audio prehrávač pre blog články hechtberger.com
+/* ADAM-PLAYER v13 — audio prehrávač pre blog články hechtberger.com
  * Hosted na GitHub Pages (hechtgit.github.io/adam-audio); footer na webe ho už len načíta.
  * Manifest + marks + MP3 žijú v tom istom repe — nový článok = git push, žiadny zásah do webu.
  * Fail-soft: ak manifest/článok/telo chýba, NIČ neurobí (web sa nikdy nerozbije).
  *
+ * v13 = karaoke zvýrazňuje aj odrážky, ktoré sú súčasťou hovoreného tela článku.
  * v12 = výraznejší Adam-gold karaoke highlight + voliteľné sledovanie textu pri prehrávaní.
  * v11 = karaoke toleruje display-block inline štítky bez textovej medzery (napr. "Čo tým netvrdím:").
  * v10 = karaoke nájde aj Squarespace Code Block články (.ph-exit-article/.sqs-code-container).
@@ -208,7 +209,7 @@
   function collectReadableElements(blocks) {
     var els = [];
     blocks.forEach(function (b) {
-      [].slice.call(b.querySelectorAll("h1,h2,h3,h4,p,summary")).forEach(function (el) {
+      [].slice.call(b.querySelectorAll("h1,h2,h3,h4,p,li,summary")).forEach(function (el) {
         if (el.closest("#adam-player")) return;
         if (els.indexOf(el) < 0) els.push(el);
       });
