@@ -1,4 +1,4 @@
-/* ADAM-PLAYER v13 — audio prehrávač pre blog články hechtberger.com
+/* ADAM-PLAYER v14 — audio prehrávač pre blog články hechtberger.com
  * Hosted na GitHub Pages (hechtgit.github.io/adam-audio); footer na webe ho už len načíta.
  * Manifest + marks + MP3 žijú v tom istom repe — nový článok = git push, žiadny zásah do webu.
  * Fail-soft: ak manifest/článok/telo chýba, NIČ neurobí (web sa nikdy nerozbije).
@@ -276,7 +276,7 @@
     return wrapped;
   }
 
-  // JSON-LD: AudioObject (audio verzia článku) + speakable — len na stránkach s audiom.
+  // JSON-LD: AudioObject (audio verzia článku) + speakable — len na stránkach s audiom.
   function injectSchema(data) {
     try {
       if (document.getElementById("adam-ldjson")) return;
@@ -287,7 +287,7 @@
         "@context": "https://schema.org",
         "@type": "AudioObject",
         "name": (data.title || document.title) + " — audio verzia",
-        "description": "Článok prečítaný nahlas Adamom, AI asistentom Petra Hechtbergera. Slovenský syntetický hlas, s prepisom priamo na stránke.",
+        "description": "Článok prečítaný nahlas Adamom, AI asistentom Petra Hechtbergera. Slovenský syntetický hlas, s prepisom priamo na stránke.",
         "contentUrl": data.mp3,
         "encodingFormat": "audio/mpeg",
         "inLanguage": "sk",
@@ -313,6 +313,16 @@
     st.id = "adam-player-dynamic-style";
     st.textContent =
       "#adam-player,#adam-player *{box-sizing:border-box;}" +
+      // Article Code Block saves can merge damaged CSS selectors into all SVGs.
+      // Own the icon geometry inside this component regardless of article/theme CSS order.
+      "#adam-player svg{box-sizing:border-box!important;display:block!important;position:static!important;float:none!important;clear:none!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;max-width:none!important;min-width:0!important;min-height:0!important;flex:0 0 auto!important;aspect-ratio:auto!important;overflow:visible!important;}" +
+      "#adam-player #adam-mk{width:94px!important;height:113px!important;}" +
+      "#adam-player #adam-ic{width:28px!important;height:28px!important;}" +
+      "#adam-player #adam-rate .adam-rate-gauge{width:12px!important;height:12px!important;}" +
+      "#adam-player #adam-rate .adam-rate-caret{width:10px!important;height:10px!important;}" +
+      "#adam-player #adam-follow svg{width:15px!important;height:15px!important;}" +
+      "#adam-player #adam-cta{color:#1a1a1a!important;text-decoration:none!important;}" +
+      "#adam-player #adam-again{color:#8a8578!important;text-decoration:underline!important;}" +
       "#adam-player #adam-btn{background-color:" + GOLD + ";border-color:" + GOLD + ";color:" + INK + ";}" +
       ".adam-s{transition:background .4s,color .4s;border-radius:0;padding:0 2px;}" +
       ".adam-s.adam-on{background:" + GOLD + ";color:" + INK + ";box-shadow:0 0 0 2px rgba(177,133,66,.18);}" +
@@ -483,7 +493,7 @@
 
     var right = wrap.querySelector("#adam-right");
 
-    // Decentná zlatá neurónová sieť: statická hneď po načítaní, hýbe sa až počas prehrávania.
+    // Decentná zlatá neurónová sieť: statická hneď po načítaní, hýbe sa až počas prehrávania.
     var nn = (function(){
       var cv = wrap.querySelector("#adam-nn"); if (!cv || !cv.getContext) return { idle:function(){}, start:function(){}, stop:function(){} };
       var ctx = cv.getContext("2d"), raf = null, nodes = [], W = 0, H = 0,
