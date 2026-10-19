@@ -106,5 +106,11 @@
   "marks": "privatna-renta-a-dve-odlisne-strategie.marks.json",
   "title": "Privátna renta a dve odlišné stratégie",
   "duration": 517.8
+ },
+ "poradie-vynosov-a-privatna-renta": {
+  "mp3": "poradie-vynosov-a-privatna-renta.mp3",
+  "marks": "poradie-vynosov-a-privatna-renta.marks.json",
+  "title": "Privátna renta, z čoho čerpať, keď trhy klesnú",
+  "duration": 382.392
  }
 }
