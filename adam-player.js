@@ -1,8 +1,9 @@
-/* ADAM-PLAYER v14 — audio prehrávač pre blog články hechtberger.com
+/* ADAM-PLAYER v15 — audio prehrávač pre blog články hechtberger.com
  * Hosted na GitHub Pages (hechtgit.github.io/adam-audio); footer na webe ho už len načíta.
  * Manifest + marks + MP3 žijú v tom istom repe — nový článok = git push, žiadny zásah do webu.
  * Fail-soft: ak manifest/článok/telo chýba, NIČ neurobí (web sa nikdy nerozbije).
  *
+ * v15 = karaoke zachováva odkazy, pôvodné inline prvky a nezalomiteľné medzery.
  * v13 = karaoke zvýrazňuje aj odrážky, ktoré sú súčasťou hovoreného tela článku.
  * v12 = výraznejší Adam-gold karaoke highlight + voliteľné sledovanie textu pri prehrávaní.
  * v11 = karaoke toleruje display-block inline štítky bez textovej medzery (napr. "Čo tým netvrdím:").
@@ -211,7 +212,7 @@
     blocks.forEach(function (b) {
       [].slice.call(b.querySelectorAll("h1,h2,h3,h4,p,li,summary")).forEach(function (el) {
         if (el.closest("#adam-player")) return;
-        if (els.indexOf(el) < 0) els.push(el);
+        if (!els.some(function (parent) { return parent === el || parent.contains(el); })) els.push(el);
       });
     });
     return els;
@@ -224,9 +225,32 @@
     return txt.indexOf(target) >= 0;
   }
 
+  // Wrap only text fragments; keep anchors, formatting and their listeners intact.
+  // Offsets refer to the original textContent, including NBSP and UTF-16 pairs.
+  function wrapTextRange(el, start, end, index) {
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    var node, offset = 0, pieces = [];
+    while ((node = walker.nextNode())) {
+      var next = offset + node.length;
+      if (next > start && offset < end) {
+        pieces.push({ node: node, start: Math.max(0, start - offset), end: Math.min(node.length, end - offset) });
+      }
+      offset = next;
+    }
+    for (var pi = pieces.length - 1; pi >= 0; pi--) {
+      var piece = pieces[pi], text = piece.node;
+      if (piece.end < text.length) text.splitText(piece.end);
+      if (piece.start) text = text.splitText(piece.start);
+      var span = document.createElement("span");
+      span.className = "adam-s";
+      span.setAttribute("data-i", index);
+      text.parentNode.insertBefore(span, text);
+      span.appendChild(text);
+    }
+  }
+
   function wrapSentences(blocks, marks) {
     var els = collectReadableElements(blocks);
-    var norms = els.map(function (el) { return normTxt(el.textContent || ""); });
     var gi = 0, wrapped = 0;
 
     function appearsLater(target, compactTarget, fromIndex) {
@@ -237,7 +261,7 @@
     }
 
     for (var ei = 0; ei < els.length && gi < marks.length; ei++) {
-      var el = els[ei], txt = norms[ei];
+      var el = els[ei], txt = el.textContent || "";
       if (!txt) continue;
 
       if (isWholeBlock(el)) {
@@ -257,7 +281,7 @@
         continue;
       }
 
-      var html = "", pos = 0, matchedHere = false;
+      var ranges = [], pos = 0;
       while (gi < marks.length) {
         var target = normTxt(marks[gi].text || "");
         var compactTarget = compactTxt(target);
@@ -267,11 +291,13 @@
           if (!appearsLater(target, compactTarget, ei)) { gi++; continue; }
           break;
         }
-        if (hit.start > pos) html += esc(txt.slice(pos, hit.start));
-        html += '<span class="adam-s" data-i="' + marks[gi].i + '">' + esc(txt.slice(hit.start, hit.end)) + "</span>";
-        pos = hit.end; gi++; matchedHere = true; wrapped++;
+        ranges.push({ start: hit.start, end: hit.end, index: marks[gi].i });
+        pos = hit.end; gi++; wrapped++;
       }
-      if (matchedHere) { html += esc(txt.slice(pos)); el.innerHTML = html; }
+      // Work backwards so splitting later text cannot invalidate an earlier range.
+      for (var ri = ranges.length - 1; ri >= 0; ri--) {
+        wrapTextRange(el, ranges[ri].start, ranges[ri].end, ranges[ri].index);
+      }
     }
     return wrapped;
   }
@@ -546,7 +572,11 @@
     if (blocks.length) wrapSentences(blocks, data.marks || []);
     var spanByI = {};
     blocks.forEach(function (body) {
-      [].slice.call(body.querySelectorAll(".adam-s,.adam-h")).forEach(function(s){ spanByI[s.getAttribute("data-i")] = s; });
+      [].slice.call(body.querySelectorAll(".adam-s,.adam-h")).forEach(function(s){
+        var index = s.getAttribute("data-i");
+        var fragments = spanByI[index] || (spanByI[index] = []);
+        if (fragments.indexOf(s) < 0) fragments.push(s);
+      });
     });
 
     var marks = data.marks || [];
@@ -629,7 +659,7 @@
     if (followBtn) followBtn.addEventListener("click", function(){
       setFollow(!followEnabled, true);
       followSuspendedUntil = 0;
-      if (followEnabled && hlEl) followActive(hlEl);
+      if (followEnabled && hlEl) followActive(hlEl[0]);
     });
     window.addEventListener("wheel", suspendFollow, { passive: true });
     window.addEventListener("touchstart", suspendFollow, { passive: true });
@@ -637,7 +667,15 @@
       if (["ArrowDown","ArrowUp","PageDown","PageUp","Home","End"," "].indexOf(e.key) >= 0) suspendFollow();
     });
 
-    function hi(el){ if(el===hlEl)return; if(hlEl)hlEl.classList.remove("adam-on"); if(el) { el.classList.add("adam-on"); followActive(el); } hlEl=el; }
+    function hi(elements){
+      if (elements === hlEl) return;
+      if (hlEl) hlEl.forEach(function(el){ el.classList.remove("adam-on"); });
+      if (elements) {
+        elements.forEach(function(el){ el.classList.add("adam-on"); });
+        followActive(elements[0]);
+      }
+      hlEl = elements;
+    }
     function paint(t){
       var f = DUR ? Math.min(1, t/DUR) : 0;
       bar.style.width = (f*100) + "%"; thumb.style.left = (f*100) + "%";
