@@ -124,5 +124,11 @@
   "marks": "privatna-renta-po-predaji-firmy.marks.json",
   "title": "Privátna renta po predaji firmy a rozdelenie kapitálu",
   "duration": 364.056
+ },
+ "predali-ste-firmu-co-pride-v-pondelok": {
+  "mp3": "predali-ste-firmu-co-pride-v-pondelok.mp3",
+  "marks": "predali-ste-firmu-co-pride-v-pondelok.marks.json",
+  "title": "Predali ste firmu. Čo príde v pondelok?",
+  "duration": 510.852
  }
 }
