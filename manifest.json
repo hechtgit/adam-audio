@@ -130,5 +130,11 @@
   "marks": "predali-ste-firmu-co-pride-v-pondelok.marks.json",
   "title": "Predali ste firmu. Čo príde v pondelok?",
   "duration": 510.852
+ },
+ "privatna-renta-pre-dvoch-a-pozostaly-partner": {
+  "mp3": "privatna-renta-pre-dvoch-a-pozostaly-partner.mp3",
+  "marks": "privatna-renta-pre-dvoch-a-pozostaly-partner.marks.json",
+  "title": "Privátna renta pre dvoch a kontinuita príjmu",
+  "duration": 322.8
  }
 }
