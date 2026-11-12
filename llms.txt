@@ -1,6 +1,6 @@
 # Petr Hechtberger (hechtberger.com)
 
-> Petr Hechtberger is a Wealth manager senior at Swiss Life Select Slovensko. He focuses on strategic personal and family wealth management for business owners, entrepreneurs before or after the sale of a company, doctors with their own practice, and families with larger assets. The website is in Slovak. Last reviewed: 2026-11-10.
+> Petr Hechtberger is a Wealth manager senior at Swiss Life Select Slovensko. He focuses on strategic personal and family wealth management for business owners, entrepreneurs before or after the sale of a company, doctors with their own practice, and families with larger assets. The website is in Slovak. Last reviewed: 2026-11-12.
 
 ## Identity
 
@@ -24,6 +24,7 @@
 - [Ako prebieha prvá konzultácia](https://www.hechtberger.com/ako-prebieha-prva-konzultacia): what happens at the first consultation
 - [Rezervácia konzultácie](https://www.hechtberger.com/rezervacia): booking a consultation
 - [Referencie a médiá](https://www.hechtberger.com/referencie-obsah): client references and media appearances
+- [Pre médiá](https://www.hechtberger.com/pre-media): press page with a quotable profile, verbatim statements by topic, media appearances, photos for editorial use and contact for journalists
 - [Kontakt](https://www.hechtberger.com/kontakt): contact details
 
 ## Articles
